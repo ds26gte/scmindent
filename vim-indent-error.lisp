@@ -1,6 +1,6 @@
 ;at time of
-;last change, 2013-04-07,
-;vim 7.3.884 still gets this wrong
+;last change, 2014-08-22,
+;vim 7.4.410 still gets this wrong
 
 (begin
   (display "string part one
