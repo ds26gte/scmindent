@@ -1,5 +1,4 @@
-;at time of
-;last change, 2014-08-22,
+;last modified: 2014-08-22
 ;vim 7.4.410 still gets this wrong
 
 (begin
