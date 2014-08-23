@@ -49,12 +49,6 @@ You might want to make the `equalprg` setting local to the filetypes
 that need it:
 
 ```
-autocmd filetype lisp,scheme setlocal equalprg=scmindent.rkt
-```
-
-or
-
-```
 autocmd bufread,bufnewfile *.lisp,*.scm setlocal equalprg=scmindent.rkt
 ```
 
