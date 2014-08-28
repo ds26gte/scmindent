@@ -47,11 +47,17 @@ In Vim, set the `equalprg` option to the filter name, which causes the
 indenting command `=` to invoke the filter rather than the built-in
 indenter.
 
-You might want to make the `equalprg` setting local to the filetypes
-that need it:
+You might want to make the `equalprg` setting local to the files
+based on their extensions:
 
 ```
 autocmd bufread,bufnewfile *.lisp,*.scm setlocal equalprg=scmindent.rkt
+```
+
+or their filetypes:
+
+```
+autocmd filetype lisp,scheme setlocal equalprg=scmindent.rkt
 ```
 
 In vi's other than Vim, use the `!` command to invoke the filter on part or all of
