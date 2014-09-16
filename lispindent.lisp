@@ -11,7 +11,7 @@
 
 ;Dorai Sitaram
 ;Oct 8, 1999
-;last change 2010-10-30
+;last change 2014-09-16
 
 ;this script takes lines of Lisp or Scheme code from its
 ;stdin and produces an indented version thereof on its
@@ -34,7 +34,7 @@
 
 (define-with-lisp-indent-number 1
   '(case
-    defpackage do-all-symbols do-external-symbols dolist do-symbols dotimes 
+    defpackage do-all-symbols do-external-symbols dolist do-symbols dotimes
     ecase etypecase eval-when
     flet
     handler-case
@@ -119,13 +119,13 @@
 
 (defun num-leading-spaces (s)
   (let ((n (length s))
-        (i 0))
+        (i 0) (j 0))
     (loop
       (when (>= i n) (return 0))
       (case (char s i)
-        (#\space (incf i))
-        (#\tab (incf i 8))
-        (t (return i))))))
+        (#\space (incf i) (incf j))
+        (#\tab (incf i) (incf j 8))
+        (t (return j))))))
 
 (defun string-trim-blanks (s)
   (string-trim '(#\space #\tab #\newline #\return) s))

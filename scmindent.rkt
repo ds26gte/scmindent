@@ -4,7 +4,7 @@
 
 ;Dorai Sitaram
 ;Oct 8, 1999
-;last change 2013-03-18
+;last change 2014-09-16
 
 ;This script takes lines of Scheme or Lisp code from its
 ;stdin and produces an indented version thereof on its
@@ -103,12 +103,12 @@
 
 (define (num-leading-spaces s)
   (let ((n (string-length s)))
-    (let loop ((i 0))
+    (let loop ((i 0) (j 0))
       (if (>= i n) 0
         (case (string-ref s i)
-          ((#\space) (loop (+ i 1)))
-          ((#\tab) (loop (+ i 8)))
-          (else i))))))
+          ((#\space) (loop (+ i 1) (+ j 1)))
+          ((#\tab) (loop (+ i 1) (+ j 8)))
+          (else j))))))
 
 (define (string-trim-blanks s)
   (let ((n (string-length s)))
