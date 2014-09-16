@@ -1,4 +1,9 @@
-Last change 2010-10-30
+Last change 2014-09-16
+
+2014 Sep 16
+
+Fixed bug in num-leading-spaces (that fortunately didn't trigger
+any indentation error all these years!).
 
 Oct 30, 2010
 
@@ -34,7 +39,7 @@ Mar 3, 2009
 
 vim's Lisp indenting still fails at times (a series of backslashed
 doublequotes inside doublequotes trips it).  So I have to resurrect this
-old script.  Added a CL version lispindent.lisp.  
+old script.  Added a CL version lispindent.lisp.
 
 v 1b2
 
@@ -59,10 +64,10 @@ Nov 28, 2002
 When looking for flush-left left-paren in order
 to start calculating indents, make sure it has
 immediately above it either: beginning of file,
-a blank line, or a comment line.  This allows 
+a blank line, or a comment line.  This allows
 a series of flush-left parens to indent properly
 at the first go, instead of user having to
-repeatedly invoke the indenter. 
+repeatedly invoke the indenter.
 
 Bugfix: String_trim_blanks wasn't trimming right space
 if left space also present.  This caused some lines
@@ -73,7 +78,7 @@ Nov 17, 2002
 
 Added makefile for my own use.
 
-v 1a 
+v 1a
 
 Nov 4, 2002
 
@@ -108,12 +113,12 @@ for the Scheme filetype so % works correctly.
 Feb 3, 2002
 
 scheme.vim, a Scheme indent plugin, is the new form of
-scmindent.vim.  scheme.vim does 
+scmindent.vim.  scheme.vim does
 
-setlocal indentexpr=GetSchemeIndent() 
+setlocal indentexpr=GetSchemeIndent()
 
 You must put scheme.vim in the indent subdir of
-some dir in your runtimepath, and ensure that you 
+some dir in your runtimepath, and ensure that you
 have 'filetype indent on'.
 
 The indenting procedure treats the keywords in the
@@ -140,7 +145,7 @@ decision-making from the user).
 scmindent.scm is strictly from stdin in stdout,
 for easy portability.
 
-Pare down the package for easy maintenance.  
+Pare down the package for easy maintenance.
 
 Nov 8, 2000
 
@@ -162,8 +167,8 @@ C-, Perl-like langs
 
 Mar 11, 2000
 
-scmindent.vim: Added a vmap for indenting a region.  
-Added support for autoindenting new lines. 
+scmindent.vim: Added a vmap for indenting a region.
+Added support for autoindenting new lines.
 
 Mar 4, 2000
 
@@ -172,8 +177,8 @@ Vim's extension lang)
 
 Jan 28, 2000
 
-scmindent.scm will indent C- or Perl-like code too, if 
-it realizes that that's what it's looking at.  
+scmindent.scm will indent C- or Perl-like code too, if
+it realizes that that's what it's looking at.
 
 Nov 12, 1999
 
@@ -185,8 +190,8 @@ Lparen followed by token of length 1 or 2 (eg, if,
 =) will cause following line to indent past the token
 (just like the preferred indentation for cond).
 
-scmindent.pl will indent C- and Perl-like code 
-too, if it realizes that that's what it's looking at.  
+scmindent.pl will indent C- and Perl-like code
+too, if it realizes that that's what it's looking at.
 
 Oct 24, 1999
 
