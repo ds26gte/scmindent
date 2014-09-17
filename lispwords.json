@@ -1,15 +1,3 @@
-// last modified 2014-09-16
-
-/*
-This is a config file used by scmindent.js. It associates indent numbers
-with Lisp keywords. If keyword A's indent number is N, then a Lisp form starting
-with A, and its I'th subform starts on another line, then if I <= N, that line
-is indented 3 columns past A. If I > N, its line is indented only one column
-past A.
-
-Place this file in $HOME.
-*/
-
 {
   "0": [
     "block",
