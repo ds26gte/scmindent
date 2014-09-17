@@ -27,13 +27,24 @@ support over the years, and provides the `lispwords` option, continues to fail i
 [strange ways](./vim-indent-error.lisp).
 
 Fortunately, both vi and Vim let you delegate the responsibility for indenting such
-code to an external filter program of your choosing.  I provide here two
+code to an external filter program of your choosing.  I provide
+here three
 such filtering scripts:
-[scmindent.rkt](./scmindent.rkt) written in PLT Racket, and
-[lispindent.lisp](./lispindent.lisp) written in Common Lisp.  The two scripts are
-operationally identical: you can use either script to indent any Lisp.
+[scmindent.rkt](./scmindent.rkt) written in PLT Racket,
+[lispindent.lisp](./lispindent.lisp) written in Common Lisp, and
+[scmindent.js](./scmindent.js) written in JavaScript.
+
+The Racket
+and CL scripts are
+operationally identical and use the same type of customization
+via the file `~/.lispwords`: you can use either script to indent any
+Lisp. The JavaScript version differs only in that its
+customization file is named `~/lispwords.json` and uses
+JSON. A sample [lispwords.json](./lispwords.json) is
+included.
 Henceforth, I will refer to just `scmindent.rkt` with the understanding that
-everything mentioned applies equally to `lispindent.lisp`.
+everything mentioned applies equally to `lispindent.lisp` and
+`scmindent.js`.
 
 `scmindent.rkt` takes
 Lisp text from its standard input and produces an indented version
