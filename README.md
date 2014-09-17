@@ -39,9 +39,8 @@ and CL scripts are
 operationally identical and use the same type of customization
 via the file `~/.lispwords`: you can use either script to indent any
 Lisp. The JavaScript version differs only in that its
-customization file is named `~/lispwords.json` and uses
-JSON. A sample [lispwords.json](./lispwords.json) is
-included.
+customization file is named [lispwords.json](./lispwords.json) and uses
+JSON.
 Henceforth, I will refer to just `scmindent.rkt` with the understanding that
 everything mentioned applies equally to `lispindent.lisp` and
 `scmindent.js`.
