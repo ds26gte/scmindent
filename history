@@ -2,6 +2,8 @@ Last change 2014-09-16
 
 2014 Sep 16
 
+Added scmindent.js, lispwords.json.
+
 Fixed bug in num-leading-spaces (that fortunately didn't trigger
 any indentation error all these years!).
 
