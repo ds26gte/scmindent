@@ -96,9 +96,11 @@ function calcSubindent(s, i) {
       }
     }
   }
-  return [ leftIndent,
-  numAlignedSubforms,
-  j-1 ];
+  return {
+    leftIndent: leftIndent,
+    numAlignedSubforms: numAlignedSubforms,
+    nextTokenIndex: j
+  }
 }
 
 var leftI = 0;
@@ -154,11 +156,11 @@ function indentLine(currLine) {
     } else if (c.match(/[\(\[]/)) {
       interWordSpaceP = false;
       var si = calcSubindent(currLine, i+1);
-      parenStack.unshift({ spacesBefore: i + currLeftI + si[0],
-        numAlignedSubforms: si[1],
+      parenStack.unshift({ spacesBefore: i + currLeftI + si.leftIndent,
+        numAlignedSubforms: si.numAlignedSubforms,
         numFinishedSubforms: 0
       });
-      i = si[2] + 1;
+      i = si.nextTokenIndex;
     } else if (c.match(/[\)\]]/)) {
       interWordSpaceP = false;
       if (parenStack.length > 0) {
