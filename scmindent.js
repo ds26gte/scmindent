@@ -178,12 +178,8 @@ fs.readFile(process.env.HOME + '/lispwords.json', 'utf8',
     function(err, data) {
       if (!err) {
         var lw = JSON.parse(data);
-        for (var ino in lw) {
-          var kww = lw[ino];
-          for (var i = 0; i < kww.length; i++) {
-            var kw = kww[i].toLowerCase();
-            lispKeywords[kw] = ino;
-          }
+        for (var kw in lw) {
+          lispKeywords[kw.toLowerCase()] = lw[kw];
         }
         var rl = readline.createInterface({
           input: process.stdin,
