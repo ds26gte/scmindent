@@ -181,14 +181,14 @@ fs.readFile(process.env.HOME + '/lispwords.json', 'utf8',
         for (var kw in lw) {
           lispKeywords[kw.toLowerCase()] = lw[kw];
         }
-        var rl = readline.createInterface({
-          input: process.stdin,
-          output: process.stdout,
-          terminal: false
-        });
-        rl.on('line', indentLine);
-        rl.on('close', function() {});
       } else {
-        //ignore error
+        process.stderr.write('~/lispwords.json missing or ill-formed\n');
       }
+      var rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+        terminal: false
+      });
+      rl.on('line', indentLine);
+      rl.on('close', function() {});
     });
