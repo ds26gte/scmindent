@@ -8,7 +8,9 @@
 // stdout
 
 var fs = require('fs');
+var events = require('events');
 
+var tbd = new events.EventEmitter();
 var lispKeywords = {};
 
 function numLeadingSpaces(s) {
@@ -183,20 +185,20 @@ function indentLines() {
         lines[0] = prevLine + lines[0];
       }
       for (var i = 0; i < lines.length-1; i++) {
-        indentLine(lines[i]);
+        tbd.emit('indentLine', lines[i]);
       }
       prevLine = lines[lines.length-1];
     }
   });
   process.stdin.on('end', function() {
     if (prevLine) {
-      indentLine(prevLine);
+      tbd.emit('indentLine', prevLine);
       prevLine = '';
     }
   });
 }
 
-function customize(tbd) {
+function customize() {
   fs.readFile(process.env.HOME + '/lispwords.json', 'utf8',
       function(err, data) {
         if (!err) {
@@ -207,8 +209,12 @@ function customize(tbd) {
         } else {
           process.stderr.write('~/lispwords.json missing or ill-formed\n');
         }
-        tbd();
+        tbd.emit('customizationDone');
       });
 }
 
-customize(indentLines);
+tbd.on('start', customize);
+tbd.on('customizationDone', indentLines);
+tbd.on('indentLine', indentLine);
+
+tbd.emit('start');
