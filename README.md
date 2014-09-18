@@ -31,14 +31,13 @@ code to an external filter program of your choosing.  I provide
 here three
 such filtering scripts:
 [scmindent.rkt](./scmindent.rkt) written in PLT Racket,
-[lispindent.lisp](./lispindent.lisp) written in Common Lisp, and
-[scmindent.js](./scmindent.js) written in JavaScript.
+[lispindent.lisp](./lispindent.lisp) in Common Lisp, and
+[scmindent.js](./scmindent.js) in JavaScript.
 
 The Racket
 and CL scripts are
 operationally identical and use the same type of customization
-via the file `~/.lispwords`: you can use either script to indent any
-Lisp. The JavaScript version differs only in that its
+via the file `~/.lispwords`. The JavaScript version differs only in that its
 customization file is named [lispwords.json](./lispwords.json) and uses
 JSON.
 Henceforth, I will refer to just `scmindent.rkt` with the understanding that
