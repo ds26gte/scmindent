@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 
 // Dorai Sitaram
-// last modified 2014-09-16
+// last modified 2014-09-18
 
 // this script takes lines of Lisp or Scheme code from its
 // stdin and produces an indented version thereof on its
 // stdout
 
-var readline = require('readline');
 var fs = require('fs');
 
 var lispKeywords = {};
@@ -174,21 +173,42 @@ function indentLine(currLine) {
   }
 }
 
-fs.readFile(process.env.HOME + '/lispwords.json', 'utf8',
-    function(err, data) {
-      if (!err) {
-        var lw = JSON.parse(data);
-        for (var kw in lw) {
-          lispKeywords[kw.toLowerCase()] = lw[kw];
-        }
-      } else {
-        process.stderr.write('~/lispwords.json missing or ill-formed\n');
+function indentLines() {
+  process.stdin.setEncoding('utf8');
+  var prevLine;
+  process.stdin.on('data', function(data) {
+    var lines = data.split('\n');
+    if (lines.length) {
+      if (prevLine) {
+        lines[0] = prevLine + lines[0];
       }
-      var rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-        terminal: false
+      for (var i = 0; i < lines.length-1; i++) {
+        indentLine(lines[i]);
+      }
+      prevLine = lines[lines.length-1];
+    }
+  });
+  process.stdin.on('end', function() {
+    if (prevLine) {
+      indentLine(prevLine);
+      prevLine = '';
+    }
+  });
+}
+
+function customize(tbd) {
+  fs.readFile(process.env.HOME + '/lispwords.json', 'utf8',
+      function(err, data) {
+        if (!err) {
+          var lw = JSON.parse(data);
+          for (var kw in lw) {
+            lispKeywords[kw] = lw[kw];
+          }
+        } else {
+          process.stderr.write('~/lispwords.json missing or ill-formed\n');
+        }
+        tbd();
       });
-      rl.on('line', indentLine);
-      rl.on('close', function() {});
-    });
+}
+
+customize(indentLines);
