@@ -56,14 +56,14 @@ In Vim, set the `equalprg` option to the filter name, which causes the
 indenting command `=` to invoke the filter rather than the built-in
 indenter.
 
-You might want to make the `equalprg` setting local to the files
-based on their extensions:
+You might want to make the `equalprg` setting local to a file
+based on its extension:
 
 ```
 autocmd bufread,bufnewfile *.lisp,*.scm setlocal equalprg=scmindent.rkt
 ```
 
-or their filetypes:
+or its filetype:
 
 ```
 autocmd filetype lisp,scheme setlocal equalprg=scmindent.rkt
