@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Dorai Sitaram
-// last modified 2014-09-18
+// last modified 2014-09-29
 
 // this script takes lines of Lisp or Scheme code from its
 // stdin and produces an indented version thereof on its
@@ -207,7 +207,7 @@ function customize() {
             lispKeywords[kw] = lw[kw];
           }
         } else {
-          process.stderr.write('~/lispwords.json missing or ill-formed\n');
+          // process.stderr.write('~/lispwords.json missing or ill-formed\n');
         }
         tbd.emit('customizationDone');
       });
