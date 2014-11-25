@@ -1,24 +1,24 @@
 # Editing Lisp and Scheme files in vi
 
-"But then, when was the last time you heard
-of a lisp programmer that used vi?"
---- Paul Fox, vile developer
+“But then, when was the last time you heard
+of a lisp programmer that used vi?”
+― Paul Fox, vile developer
 
--=-
+❧
 
 The ability to automatically indent code is indispensable when editing
 files containing s-expression-based code such as Racket, Common Lisp, Scheme,
-ART*Enterprise, and other Lisps.
+ART⋆Enterprise, and other Lisps.
 
 The text editor family vi provides the option `lisp`, which in
 conjunction with the options `autoindent` and `showmatch`
 provides a form of Lisp indenting, but except in the improved vi clone
 Vim, this support is poor in at least two respects:
 
-1. escaped
+1. escaped
 parentheses and double-quotes are not treated correctly; and
 
-2. all
+2. all
 head-words are
 treated identically.
 
@@ -47,8 +47,8 @@ everything mentioned applies equally to `lispindent.lisp` and
 `scmindent.rkt` takes
 Lisp text from its standard input and produces an indented version
 thereof on its standard output.  (Thus, it is possible to use
-`scmindent.rkt` as a command-line filter to "beautify" Lisp code, even if
-you don't use vi.)
+`scmindent.rkt` as a command-line filter to “beautify” Lisp code, even if
+you don’t use vi.)
 
 Put `scmindent.rkt` in your `PATH`.
 
@@ -69,9 +69,9 @@ or its filetype:
 autocmd filetype lisp,scheme setlocal equalprg=scmindent.rkt
 ```
 
-In vi's other than Vim, use the `!` command to invoke the filter on part or all of
-your buffer: Type `!` to declare you'll be filtering; a movement command
-to scoop up the lines you'll be filtering; then the filter name
+In vi’s other than Vim, use the `!` command to invoke the filter on part or all of
+your buffer: Type `!` to declare you’ll be filtering; a movement command
+to scoop up the lines you’ll be filtering; then the filter name
 (`scmindent.rkt`) followed by `Return`.
 
 ## How subforms are indented
@@ -85,7 +85,7 @@ a form split over two or more lines as
 follows.  (A form, if it is a list, is considered to have a head subform and zero or
 more argument subforms.)
 
-1.  If the head subform is followed by at
+1. If the head subform is followed by at
 least one other subform on the same line, then subsequent lines in the
 form are indented to line up directly under the first argument subform.
 
@@ -95,7 +95,7 @@ form are indented to line up directly under the first argument subform.
                           ...)
     ```
 
-2. If the head subform is a list and is on a line by itself, then
+2. If the head subform is a list and is on a line by itself, then
 subsequent lines in the form are indented to
 line up directly under the head subform.
 
@@ -106,7 +106,7 @@ line up directly under the head subform.
      ...)
     ```
 
-3. If the head subform is a symbol and is on a line by itself, then
+3. If the head subform is a symbol and is on a line by itself, then
 subsequent lines in the form are indented one column past the beginning
 of the head symbol.
 
@@ -117,7 +117,7 @@ of the head symbol.
       ...)
     ```
 
-4. If the head form can be deduced to be a literal, then subforms on
+4. If the head form can be deduced to be a literal, then subforms on
 subsequent lines line up directly under it, e.g.
 
     ```
@@ -134,11 +134,11 @@ subsequent lines line up directly under it, e.g.
 However, some keyword symbols are treated differently.  Each such
 keyword has a number N associated with it called its Lisp indent number,
 which influences how its subforms are indented.  This is almost exactly
-analogous to emacs's `lisp-indent-function`, except I'm using numbers
+analogous to emacs’s `lisp-indent-function`, except I’m using numbers
 throughout.
 
 If
-the i'th argument subform starts
+the i’th argument subform starts
 on a subsequent line, and i <= N, then it is indented 3 columns past the
 keyword.  All subsequent
 subforms are indented simply one column past the keyword.
@@ -168,8 +168,8 @@ You can specify your own Lisp indent numbers for keywords in the file
 `.lispwords` in your home directory.  `~/.lispwords` can contain any number of
 lists: The first element of each list is the Lisp indent number that is
 applied to the symbols in the rest of the list.  (Note that in contrast
-to Vim's flat list of `lispwords`, `~/.lispwords`
-allows for different categories of lispwords.  Vim's `lispwords` are
+to Vim’s flat list of `lispwords`, `~/.lispwords`
+allows for different categories of lispwords.  Vim’s `lispwords` are
 all of Lisp indent number 0.)
 
 For example, a lot of users prefer the keyword `if` to have its then-
@@ -188,7 +188,7 @@ number < 0.  E.g.
 (-1 if)
 ```
 
-would also cause all of `if`'s subforms to be aligned.  (This is because
+would also cause all of `if`’s subforms to be aligned.  (This is because
 -1 causes subforms on subsequent lines to line up against the first
 argument subform on the first line, and that happens to be 3 columns
 past the beginning of a 2-column keyword like `if`.  The only difference
