@@ -89,45 +89,45 @@ more argument subforms.)
 least one other subform on the same line, then subsequent lines in the
 form are indented to line up directly under the first argument subform.
 
-    ```
-    (some-user-function-1 arg1
-                          arg2
-                          ...)
-    ```
+```
+(some-user-function-1 arg1
+                      arg2
+                      ...)
+```
 
 2. If the head subform is a list and is on a line by itself, then
 subsequent lines in the form are indented to
 line up directly under the head subform.
 
-    ```
-    ((some-user-function-2)
-     arg1
-     arg2
-     ...)
-    ```
+```
+((some-user-function-2)
+ arg1
+ arg2
+ ...)
+```
 
 3. If the head subform is a symbol and is on a line by itself, then
 subsequent lines in the form are indented one column past the beginning
 of the head symbol.
 
-    ```
-    (some-user-function-3
-      arg1
-      arg2
-      ...)
-    ```
+```
+(some-user-function-3
+  arg1
+  arg2
+  ...)
+```
 
 4. If the head form can be deduced to be a literal, then subforms on
 subsequent lines line up directly under it, e.g.
 
-    ```
-    (1 2 3
-     4 5 6)
+```
+(1 2 3
+ 4 5 6)
 
-    '(alpha
-      beta
-      gamma)
-    ```
+'(alpha
+  beta
+  gamma)
+```
 
 ## Keywords
 
