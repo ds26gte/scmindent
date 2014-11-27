@@ -61,13 +61,13 @@ based on its extension:
 
 ```
 autocmd bufread,bufnewfile *.lisp,*.scm setlocal equalprg=scmindent.rkt
-```
+````
 
 or its filetype:
 
 ```
 autocmd filetype lisp,scheme setlocal equalprg=scmindent.rkt
-```
+````
 
 In vi’s other than Vim, use the `!` command to invoke the filter on part or all of
 your buffer: Type `!` to declare you’ll be filtering; a movement command
@@ -93,7 +93,7 @@ form are indented to line up directly under the first argument subform.
 (some-user-function-1 arg1
                       arg2
                       ...)
-```
+````
 
 2. If the head subform is a list and is on a line by itself, then
 subsequent lines in the form are indented to
@@ -104,7 +104,7 @@ line up directly under the head subform.
  arg1
  arg2
  ...)
-```
+````
 
 3. If the head subform is a symbol and is on a line by itself, then
 subsequent lines in the form are indented one column past the beginning
@@ -115,7 +115,7 @@ of the head symbol.
   arg1
   arg2
   ...)
-```
+````
 
 4. If the head form can be deduced to be a literal, then subforms on
 subsequent lines line up directly under it, e.g.
@@ -127,7 +127,7 @@ subsequent lines line up directly under it, e.g.
 '(alpha
   beta
   gamma)
-```
+````
 
 ## Keywords
 
@@ -154,7 +154,7 @@ subforms are indented simply one column past the keyword.
 (if test                            ;if is also a 2-keyword
     then-branch
   else-branch)
-```
+````
 
 `scmindent.rkt` pre-sets the indent numbers of many well-known
 Lisp keywords.  In addition, any symbol that starts with `def` and whose
@@ -179,14 +179,14 @@ secure this is:
 
 ```
 (3 if)
-```
+````
 
 To remove the keywordness of a symbol, you can assign it a Lisp indent
 number < 0.  E.g.
 
 ```
 (-1 if)
-```
+````
 
 would also cause all of `if`’s subforms to be aligned.  (This is because
 -1 causes subforms on subsequent lines to line up against the first
