@@ -8,7 +8,7 @@ of a lisp programmer that used vi?”
 
 The ability to automatically indent code is indispensable when editing
 files containing s-expression-based code such as Racket, Common Lisp, Scheme,
-ART⋆Enterprise, and other Lisps.
+ART*Enterprise, and other Lisps.
 
 The text editor family vi provides the option `lisp`, which in
 conjunction with the options `autoindent` and `showmatch`
