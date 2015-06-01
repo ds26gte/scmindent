@@ -25,7 +25,7 @@ treated identically.
 
 Even the redoubtable Vim, which has improved its Lisp editing
 support over the years, and provides the \fClispwords\fP option, continues to fail in
-\*[urlh ./vim-indent-error.lisp]strange ways\&.
+\*[urlh https://github.com/ds26gte/scmindent/blob/master/vim-indent-error.lisp]strange ways\&.
 
 Fortunately, both vi and Vim let you delegate the responsibility
 for indenting such code to an external filter program of your
