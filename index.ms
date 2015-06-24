@@ -30,14 +30,19 @@ support over the years, and provides the \fClispwords\fP option, continues to fa
 Fortunately, both vi and Vim let you delegate the responsibility
 for indenting such code to an external filter program of your
 choosing.  I provide here three such filtering scripts:
-\&./scmindent.rkt written in Racket, ./lispindent.lisp in Common
-Lisp, and ./scmindent.js in JavaScript.
+\*[urlh \
+https://github.com/ds26gte/scmindent/blob/master/scmindent.rkt]scmindent.rkt\&
+written in Racket, \*[urlh \
+https://github.com/ds26gte/scmindent/blob/master/lispindent.lisp]lispindent.lisp\& in Common
+Lisp, and \*[urlh \
+https://github.com/ds26gte/scmindent/blob/master/scmindent.js]scmindent.js\& in JavaScript.
 
 The Racket
 and CL scripts are
 operationally identical and use the same type of customization
 via the file \fC~/.lispwords\fP. The JavaScript version differs only in that its
-customization file is named ./lispwords.json and uses
+customization file is named \*[urlh \
+https://github.com/ds26gte/scmindent/blob/master/lispwords.json]lispindent.json\& and uses
 JSON.
 Henceforth, I will refer to just \fCscmindent.rkt\fP with the understanding that
 everything mentioned applies equally to \fClispindent.lisp\fP and
@@ -203,4 +208,4 @@ and else-subforms by differing amounts.)
 
 ❧❧❧
 
-Last modified: 2015-06-01
+Last modified: 2015–06–23
