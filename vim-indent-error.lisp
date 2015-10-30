@@ -1,5 +1,5 @@
-;last modified: 2014-08-31
-;vim 7.4.430 still gets this wrong
+;last modified: 2015-10-30
+;(n)vim with v:version == 704 still gets this wrong
 
 (begin
   (display "alpha

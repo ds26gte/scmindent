@@ -1,4 +1,4 @@
-.=* Editing Lisp and Scheme files in vi
+.TH "Editing Lisp and Scheme files in vi"
 
 “But then, when was the last time you heard
 of a lisp programmer that used vi?”
@@ -13,8 +13,9 @@ ART*Enterprise, and other Lisps.
 
 The text editor family vi provides the option \fClisp\fP, which in
 conjunction with the options \fCautoindent\fP and \fCshowmatch\fP
-provides a form of Lisp indenting, but except in the improved vi clone
-Vim, this support is poor in at least two respects:
+provides a form of Lisp indenting, but except in the improved vi
+clones
+Vim and Neovim, this support is poor in at least two respects:
 
 1. escaped
 parentheses and double-quotes are not treated correctly; and
@@ -25,23 +26,23 @@ treated identically.
 
 Even the redoubtable Vim, which has improved its Lisp editing
 support over the years, and provides the \fClispwords\fP option, continues to fail in
-\*[urlh https://github.com/ds26gte/scmindent/blob/master/vim-indent-error.lisp]strange ways\&.
+\*[url https://github.com/ds26gte/scmindent/blob/master/vim-indent-error.lisp]strange ways\&.
 
 Fortunately, both vi and Vim let you delegate the responsibility
 for indenting such code to an external filter program of your
 choosing.  I provide here three such filtering scripts:
-\*[urlh \
+\*[url \
 https://github.com/ds26gte/scmindent/blob/master/scmindent.rkt]scmindent.rkt\&
-written in Racket, \*[urlh \
+written in Racket, \*[url \
 https://github.com/ds26gte/scmindent/blob/master/lispindent.lisp]lispindent.lisp\& in Common
-Lisp, and \*[urlh \
+Lisp, and \*[url \
 https://github.com/ds26gte/scmindent/blob/master/scmindent.js]scmindent.js\& in JavaScript.
 
 The Racket
 and CL scripts are
 operationally identical and use the same type of customization
 via the file \fC~/.lispwords\fP. The JavaScript version differs only in that its
-customization file is named \*[urlh \
+customization file is named \*[url \
 https://github.com/ds26gte/scmindent/blob/master/lispwords.json]lispindent.json\& and uses
 JSON.
 Henceforth, I will refer to just \fCscmindent.rkt\fP with the understanding that
@@ -78,7 +79,7 @@ your buffer: Type \fC!\fP to declare you’ll be filtering; a movement command
 to scoop up the lines you’ll be filtering; then the filter name
 (\fCscmindent.rkt\fP) followed by \fCReturn\fP.
 
-.== How subforms are indented
+.SS How subforms are indented
 
 Lisp indentation has a tacit, widely accepted convention that is not
 lightly to be messed with, so \fCscmindent.rkt\fP strives to provide the same
@@ -133,7 +134,7 @@ subsequent lines line up directly under it, e.g.
   gamma)
 .EE
 
-.== Keywords
+.SS Keywords
 
 However, some keyword symbols are treated differently.  Each such
 keyword has a number N associated with it called its Lisp indent number,
@@ -166,7 +167,7 @@ indent number has not
 been explicitly set is assumed to
 have an indent number of 0.
 
-.== Customization
+.SS Customization
 
 You can specify your own Lisp indent numbers for keywords in the file
 \fC.lispwords\fP in your home directory.  \fC~/.lispwords\fP can contain any number of
@@ -208,4 +209,4 @@ and else-subforms by differing amounts.)
 
 ❧❧❧
 
-Last modified: 2015–06–23
+Last modified: 2015–10–30
