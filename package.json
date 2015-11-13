@@ -1,0 +1,11 @@
+{
+  "author": "Dorai Sitaram ds26gte.github.io",
+  "name": "scmindent",
+  "description": "filter for indenting Racket, Scheme, Common Lisp, LFE, ART*Enterprise, etc",
+  "version": "1.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ds26gte/scmindent.git"
+  },
+  "bin": "./scmindent.js"
+}
