@@ -31,11 +31,11 @@ link:./vim-indent-error.lisp[strange ways].
 Fortunately, both vi and Vim let you delegate the responsibility
 for indenting such code to an external filter program of your
 choosing.  I provide here three such filtering scripts:
-link:./scmindent.rkt[scmindent.rkt]
+link:scmindent.rkt[]
 written in Racket,
-link:./lispindent.lisp[lispindent.lisp] in Common
+link:lispindent.lisp[] in Common
 Lisp, and
-link:./scmindent.js[scmindent.js] in JavaScript.
+link:scmindent.js[] in JavaScript.
 
 == Installation
 
@@ -46,7 +46,7 @@ via the file `~/.lispwords`.
 
 The JavaScript version differs only in that its
 customization file is named
-link:./lispwords.json[lispindent.json] and uses
+link:lispwords.json[] and uses
 JSON.
 
 To use either of `scmindent.rkt`, `lispindent.lisp`, or
@@ -256,4 +256,4 @@ be specified as follows in `lispwords.json`:
 
 ❧❧❧
 
-Last modified: 2015-11-13
+Last modified: 2015-11-14
