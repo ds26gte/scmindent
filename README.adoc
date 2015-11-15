@@ -1,10 +1,10 @@
 = Editing Lisp and Scheme files in vi
 
+[quote, Paul Fox&#x2c vile developer]
+____
 “But then, when was the last time you heard
 of a lisp programmer that used vi?”
-— Paul Fox, vile developer
-
-❧❧❧
+____
 
 The ability to automatically indent code is indispensable when editing
 files containing s-expression-based code such as Racket, Common Lisp, Scheme,
@@ -256,4 +256,4 @@ be specified as follows in `lispwords.json`:
 
 ❧❧❧
 
-Last modified: 2015-11-14
+Last modified: 2015-11-15
