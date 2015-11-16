@@ -256,4 +256,4 @@ be specified as follows in `lispwords.json`:
 
 ❧❧❧
 
-Last modified: 2015-11-15
+—Dorai Sitaram
