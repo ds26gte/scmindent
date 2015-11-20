@@ -1,10 +1,8 @@
 = Editing Lisp and Scheme files in vi
 
 [quote, Paul Fox&#x2c vile developer]
-____
-“But then, when was the last time you heard
-of a lisp programmer that used vi?”
-____
+But then, when was the last time you heard
+of a lisp programmer that used vi?
 
 The ability to automatically indent code is indispensable when editing
 files containing s-expression-based code such as Racket, Common Lisp, Scheme,
@@ -105,20 +103,20 @@ a form split over two or more lines as
 follows.  (A form, if it is a list, is considered to have a head subform and zero or
 more argument subforms.)
 
-1: If the head subform is followed by at
+1. If the head subform is followed by at
 least one other subform on the same line, then subsequent lines in the
 form are indented to line up directly under the first argument subform.
-
++
 ----
 (some-user-function-1 arg1
                       arg2
                       ...)
 ----
 
-2: If the head subform is a list and is on a line by itself, then
+2. If the head subform is a list and is on a line by itself, then
 subsequent lines in the form are indented to
 line up directly under the head subform.
-
++
 ----
 ((some-user-function-2)
  arg1
@@ -126,10 +124,10 @@ line up directly under the head subform.
  ...)
 ----
 
-3: If the head subform is a symbol and is on a line by itself, then
+3. If the head subform is a symbol and is on a line by itself, then
 subsequent lines in the form are indented one column past the beginning
 of the head symbol.
-
++
 ----
 (some-user-function-3
   arg1
@@ -137,9 +135,9 @@ of the head symbol.
   ...)
 ----
 
-4: If the head form can be deduced to be a literal, then subforms on
+4. If the head form can be deduced to be a literal, then subforms on
 subsequent lines line up directly under it, e.g.
-
++
 ----
 (1 2 3
  4 5 6)
