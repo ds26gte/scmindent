@@ -1,8 +1,12 @@
+// last modified 2015-11-20
 = Editing Lisp and Scheme files in vi
+:prewrap!:
 
 [quote, Paul Fox&#x2c vile developer]
 But then, when was the last time you heard
 of a lisp programmer that used vi?
+
+❧❧❧
 
 The ability to automatically indent code is indispensable when editing
 files containing s-expression-based code such as Racket, Common Lisp, Scheme,
@@ -157,7 +161,7 @@ throughout.
 
 If
 the i’th argument subform starts
-on a subsequent line, and i <= N, then it is indented 3 columns past the
+on a subsequent line, and i ≤ N, then it is indented 3 columns past the
 keyword.  All subsequent
 subforms are indented simply one column past the keyword.
 
