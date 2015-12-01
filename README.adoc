@@ -1,10 +1,12 @@
-// last modified 2015-11-20
+// last modified 2015-11-23
 = Editing Lisp and Scheme files in vi
 :prewrap!:
 
 [quote, Paul Fox&#x2c vile developer]
+--
 But then, when was the last time you heard
 of a lisp programmer that used vi?
+--
 
 ❧❧❧
 
@@ -28,7 +30,7 @@ treated identically.
 
 Even the redoubtable Vim, which has improved its Lisp editing
 support over the years, and provides the `lispwords` option, continues to fail in
-link:./vim-indent-error.lisp[strange ways].
+link:vim-indent-error.lisp[strange ways].
 
 Fortunately, both vi and Vim let you delegate the responsibility
 for indenting such code to an external filter program of your
@@ -100,7 +102,7 @@ to scoop up the lines you’ll be filtering; then the filter name
 
 Lisp indentation has a tacit, widely accepted convention that is not
 lightly to be messed with, so `scmindent.rkt` strives to provide the same
-style as emacs, with the same type of customization.
+style as Emacs, with the same type of customization.
 
 By default, the indentation procedure treats
 a form split over two or more lines as
@@ -156,7 +158,7 @@ subsequent lines line up directly under it, e.g.
 However, some keyword symbols are treated differently.  Each such
 keyword has a number N associated with it called its Lisp indent number,
 which influences how its subforms are indented.  This is almost exactly
-analogous to emacs’s `lisp-indent-function`, except I’m using numbers
+analogous to Emacs’s `lisp-indent-function`, except I’m using numbers
 throughout.
 
 If
@@ -232,7 +234,7 @@ itself, with the test on the line following.  −1 indents subsequent
 lines one column past the beginning of the `if`, whereas 3 continues to
 indent them three columns past the beginning of the `if`.  Further
 differences emerge between 3 and −1 when the `if` has more than three
-argument subforms, as allowed by emacs lisp, where 2 and −1 immediately
+argument subforms, as allowed by Emacs Lisp, where 2 and −1 immediately
 prove to be better choices than 3.  The author has made 2 the default
 because it is the only option that has the merit of indenting the then-
 and else-subforms by differing amounts.)
