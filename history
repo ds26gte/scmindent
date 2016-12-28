@@ -1,4 +1,8 @@
-Last change 2014-09-16
+Last change 2016-12-28
+
+2016 Dec 28
+
+Fix string-trim-blanks to work on blank lines. From @netmany.
 
 2014 Sep 16
 

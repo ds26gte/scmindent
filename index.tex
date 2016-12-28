@@ -1,12 +1,11 @@
-% last modified 2016-11-11
+% last modified 2016-12-28
 \input tex2page
 \input tgtermes
 \input ubuntu
 \overfullrule 0pt
-\cssblock
-body { max-width: 450pt; }
-\endcssblock
+\def\TZPhsize{450pt}
 \activettchar`
+\def\item#1{({\it #1\/})}
 \title{Editing Lisp and Scheme files in vi}
 
 \ifx\shipout\UnDeFiNeD
@@ -37,10 +36,10 @@ provides a form of Lisp indenting, but except in the improved vi
 clones
 Vim and Neovim, this support is poor in at least two respects:
 
-1. escaped
+\item{i} escaped
 parentheses and double-quotes are not treated correctly; and
 
-2. all
+\item{ii} all
 head-words are
 treated identically.
 
@@ -74,7 +73,7 @@ To use either of `scmindent.rkt`, `lispindent.lisp`, or
 the JavaScript version is also available as a Node
 package:
 
-\p{
+\verb{
 sudo npm install -g scmindent
 }
 This directly installs the executable `scmindent` in your `PATH`.
@@ -98,12 +97,12 @@ indenter.
 You might want to make the `equalprg` setting local to a file
 based on its extension:
 
-\p{
+\verb{
 autocmd bufread,bufnewfile *.lisp,*.scm setlocal equalprg=scmindent.rkt
 }
 or its filetype:
 
-\p{
+\verb{
 autocmd filetype lisp,scheme setlocal equalprg=scmindent.rkt
 }
 In vi’s other than Vim, use the `!` command to invoke the filter on part or all of
@@ -122,42 +121,42 @@ a form split over two or more lines as
 follows.  (A form, if it is a list, is considered to have a head subform and zero or
 more argument subforms.)
 
-1. If the head subform is followed by at
+\item{i} If the head subform is followed by at
 least one other subform on the same line, then subsequent lines in the
 form are indented to line up directly under the first argument subform.
 
-\p{
+\verb{
 (some-user-function-1 arg1
                       arg2
                       ...)
 }
 
-2. If the head subform is a list and is on a line by itself, then
+\item{ii} If the head subform is a list and is on a line by itself, then
 subsequent lines in the form are indented to
 line up directly under the head subform.
 
-\p{
+\verb{
 ((some-user-function-2)
  arg1
  arg2
  ...)
 }
 
-3. If the head subform is a symbol and is on a line by itself, then
+\item{iii} If the head subform is a symbol and is on a line by itself, then
 subsequent lines in the form are indented one column past the beginning
 of the head symbol.
 
-\p{
+\verb{
 (some-user-function-3
   arg1
   arg2
   ...)
 }
 
-4. If the head form can be deduced to be a literal, then subforms on
-subsequent lines line up directly under it, e.g.
+\item{iv} If the head form can be deduced to be a literal, then subforms on
+subsequent lines line up directly under it, e.g.,
 
-\p{
+\verb{
 (1 2 3
  4 5 6)
 
@@ -180,7 +179,7 @@ on a subsequent line, and $i \le N$, then it is indented 3 columns past the
 keyword.  All subsequent
 subforms are indented simply one column past the keyword.
 
-\p{
+\verb{
 (defun some-user-function-4 (x y)   ;defun is a 2-keyword
   body ...)
 
@@ -205,7 +204,7 @@ You can specify your own Lisp indent numbers for keywords in the file
 lists: The first element of each list is the Lisp indent number that is
 applied to the symbols in the rest of the list.  E.g.,
 
-\p{
+\verb{
 (0 begin0)
 (1 when unless)
 (2 do defun)
@@ -225,13 +224,13 @@ and else-clauses indented the same amount of 3 columns.  I.e.,
 they want it to be a 3-keyword.  A `.lispwords` entry that would
 secure this is:
 
-\p{
+\verb{
 (3 if)
 }
 To remove the keywordness of a symbol, you can assign it a Lisp indent
 number $< 0$.  E.g.
 
-\p{
+\verb{
 (-1 if)
 }
 would also cause all of `if`’s subforms to be aligned.  (This is because
@@ -257,7 +256,7 @@ keywords sharing the same Lisp indent number cannot be bunched.
 E.g., the example `.lispwords` of the previous section will
 be specified as follows in `lispwords.json`:
 
-\p{
+\verb{
 {
   "begin0": 0,
   "when": 1,

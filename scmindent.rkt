@@ -4,7 +4,7 @@
 
 ;Dorai Sitaram
 ;Oct 8, 1999
-;last change 2014-09-16
+;last change 2016-12-28
 
 ;This script takes lines of Scheme or Lisp code from its
 ;stdin and produces an indented version thereof on its
@@ -115,14 +115,15 @@
     (let ((j (let loop ((j 0))
                (if (or (>= j n)
                        (not (char-whitespace? (string-ref s j))))
-                 j
-                 (loop (+ j 1)))))
-          (k (let loop ((k (- n 1)))
-               (if (or (< k 0)
-                       (not (char-whitespace? (string-ref s k))))
-                 (+ k 1)
-                 (loop (- k 1))))))
-      (substring s j k))))
+                   j
+                   (loop (+ j 1))))))
+      (if (>= j n) ""
+          (let ((k (let loop ((k (- n 1)))
+                     (if (or (< k 0)
+                             (not (char-whitespace? (string-ref s k))))
+                         (+ k 1)
+                         (loop (- k 1))))))
+            (substring s j k))))))
 
 (define-struct lparen
   (spaces-before num-aligned-subforms (num-finished-subforms #:auto))
