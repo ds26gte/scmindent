@@ -19,14 +19,10 @@ end
 local lwfile = os.getenv('HOME') .. '/.lispwords.lua'
 
 if file_exists(lwfile) then 
-  -- print('lwfile found')
-  local x = loadfile(lwfile); x()
-  -- print('cwif=', lispwords['call-with-input-file'])
+  loadfile(lwfile)()
 else
   lispwords = {}
 end
-
--- print('cwif2=', lispwords['call-with-input-file'])
 
 function string_trim_blanks(s) 
   return string.gsub(string.gsub(s, '^%s+', ''), '%s+$', '')
@@ -58,11 +54,9 @@ function past_next_token(s, i, n)
       if string.sub(s, i+1, i+1) == '\\' then
         escapep = true; i = i+2
       else
-        -- print('pnt returns', i)
         return i
       end
     elseif c == "'" or string.find(c, '[][ \t()"`,;]') then
-      -- print('pnt returns', i)
       return i
     else
       escapep = false; i = i+1
@@ -97,7 +91,6 @@ function calc_subindent(s, i, n)
       end
     end
   end
-  -- print('csi returns', left_indent, num_aligned_subforms, j)
   return left_indent, num_aligned_subforms, j
 end
 
@@ -124,7 +117,6 @@ function indent_lines()
     local curr_line = io.read()
     if not curr_line then break end
     local leading_spaces = num_leading_spaces(curr_line)
-    -- print('currline leadsp=', leading_spaces)
     local curr_left_i
     if stringp then
       curr_left_i = leading_spaces
@@ -134,17 +126,14 @@ function indent_lines()
       end
       curr_left_i = left_i
     else
-      -- print('sb=', paren_stack[1].spaces_before)
       curr_left_i = paren_stack[1].spaces_before
       local extra_w = 0
-      -- print('nfs=', paren_stack[1].num_finished_subforms, 'nfa=', paren_stack[1].num_aligned_subforms)
       if paren_stack[1].num_finished_subforms < paren_stack[1].num_aligned_subforms then
         paren_stack[1].num_finished_subforms = paren_stack[1].num_finished_subforms + 1
         curr_left_i = curr_left_i + 2
       end
     end
     curr_line = string_trim_blanks(curr_line)
-    -- print('currlefti=', curr_left_i)
     io.write(string.rep(' ', curr_left_i), curr_line, '\n')
     --
     local n = #curr_line
