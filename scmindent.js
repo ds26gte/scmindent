@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Dorai Sitaram
-// last modified 2014-09-29
+// last modified 2017-12-11
 
 // this script takes lines of Lisp or Scheme code from its
 // stdin and produces an indented version thereof on its
@@ -33,7 +33,7 @@ function literalTokenP(s) {
   return !!s.match(/^[0-9#"]/);
 }
 
-function lispIndentNumber(s) {
+function getLispIndentNumber(s) {
   var n;
   s = s.toLowerCase();
   if (n = lispKeywords[s]) {
@@ -45,82 +45,73 @@ function lispIndentNumber(s) {
   }
 }
 
-function pastNextToken(s, i) {
+function pastNextAtom(s, i) {
   var n = s.length;
-  var escapeP = false;
   while (true) {
     if (i >= n) {
       return n;
+    } 
+    var c = s[i];
+    if (c === '\\') {
+      i++; i++;
+    } else if (c.match(/[ \t\(\)\[\]"'`,;]/)) {
+      return i;
     } else {
-      var c = s[i];
-      if (escapeP) {
-        escapeP = false; i++;
-      } else if (c === '\\') {
-        escapeP = true; i++;
-      } else if (c === '#') {
-        if (s[i+1] === '\\') {
-          escapeP = true; i = i+2;
-        } else {
-          return i;
-        }
-      } else if (c.match(/[ \t\(\)\[\]"'`,;]/)) {
-        return i;
-      } else {
-        escapeP = false; i++;
-      }
+      i++;
     }
   }
 }
 
 function calcSubindent(s, i) {
   var n = s.length;
-  var j = pastNextToken(s, i);
-  var numAlignedSubforms = 0;
-  var leftIndent;
+  var j = pastNextAtom(s, i);
+  var deltaIndent = 0;
+  var lispIndentNum = -1;
   if (j === i) {
-    leftIndent = 1;
+    ;
   } else {
     var w = s.substring(i, j);
     if (i >= 2 && s[i-2].match(/['`]/)) {
-      leftIndent = 1;
+      ;
     } else {
-      var nas = lispIndentNumber(w);
-      if (nas >= 0) {
-        numAlignedSubforms = nas;
-        leftIndent = 2;
-      } else if (literalTokenP(w)) {
-        leftIndent = 1;
-      } else if (j === n) {
-        leftIndent = 1;
+      var lispIndentNum = getLispIndentNumber(w);
+      if (lispIndentNum == -2) {
+        ;
+      } else if (lispIndentNum == -1) {
+        if (j < n) {
+          deltaIndent = j - i + 1
+        } else {
+          deltaIndent = 1
+        }
       } else {
-        leftIndent = j - i + 2;
+        deltaIndent = 1
       }
     }
   }
   return {
-    leftIndent: leftIndent,
-    numAlignedSubforms: numAlignedSubforms,
+    deltaIndent: deltaIndent,
+    lispIndentNum: lispIndentNum,
     nextTokenIndex: j
   }
 }
 
+var defaultLeftI = -1;
 var leftI = 0;
 var parenStack = [];
-var stringP = false;
+var insideStringP = false;
 
 function indentLine(currLine) {
   var leadingSpaces = numLeadingSpaces(currLine);
   var currLeftI;
-  if (stringP) {
+  if (insideStringP) {
     currLeftI = leadingSpaces;
   } else if (parenStack.length === 0) {
-    if (leftI === 0) { leftI = leadingSpaces; }
+    if (defaultLeftI === -1) { defaultLeftI = leadingSpaces; }
+    leftI = defaultLeftI;
     currLeftI = leftI;
   } else {
     currLeftI = parenStack[0].spacesBefore;
-    var extraW = 0;
-    if (parenStack[0].numFinishedSubforms < parenStack[0].numAlignedSubforms) {
-      parenStack[0].numFinishedSubforms++;
+    if (parenStack[0].numFinishedSubforms < parenStack[0].lispIndentNum) {
       currLeftI += 2;
     }
   }
@@ -132,47 +123,57 @@ function indentLine(currLine) {
   process.stdout.write('\n');
 
   var escapeP = false;
-  var interWordSpaceP = false;
+  var tokenIntersticeP = false;
   var i = 0;
+  function incrFinishedSubforms() {
+    if (!tokenIntersticeP) {
+      if (parenStack.length > 0) {
+        parenStack[0].numFinishedSubforms++;
+      }
+    }
+    tokenIntersticeP = true;
+  }
   while (i < currLine.length) {
     var c = currLine[i];
     if (escapeP) {
       escapeP = false; i++;
     } else if (c === '\\') {
-      escapeP = true; i++;
-    } else if (stringP) {
-      if (c === '"') { stringP = false; } i++;
+      tokenIntersticeP = false; escapeP = true; i++;
+    } else if (insideStringP) {
+      if (c === '"') { insideStringP = false; incrFinishedSubforms(); } i++;
     } else if (c === ';') {
-      break;
+      incrFinishedSubforms(); break;
     } else if (c === '"') {
-      stringP = true; i++;
+      incrFinishedSubforms(); insideStringP = true; i++;
     } else if (c.match(/[ \t]/)) {
-      if (!interWordSpaceP) {
-        interWordSpaceP = true;
-        if (parenStack.length > 0) {
-          parenStack[0].numFinishedSubforms++;
-        }
-      }
-      i++;
+      incrFinishedSubforms(); i++;
     } else if (c.match(/[\(\[]/)) {
-      interWordSpaceP = false;
+      incrFinishedSubforms();
       var si = calcSubindent(currLine, i+1);
-      parenStack.unshift({ spacesBefore: i + currLeftI + si.leftIndent,
-        numAlignedSubforms: si.numAlignedSubforms,
-        numFinishedSubforms: 0
+      parenStack.unshift({ spacesBefore: 1 + i + currLeftI + si.deltaIndent,
+        lispIndentNum: si.lispIndentNum,
+        numFinishedSubforms: -1
       });
-      i = si.nextTokenIndex;
+      tokenIntersticeP = true;
+      var iNext = i+1;
+      if (si.j > iNext) {
+        iNext = j;
+        tokenIntersticeP = false;
+      }
+      i = iNext;
     } else if (c.match(/[\)\]]/)) {
-      interWordSpaceP = false;
+      tokenIntersticeP = false;
       if (parenStack.length > 0) {
         parenStack.shift();
+      } else {
         leftI = 0;
       }
       i++;
     } else {
-      interWordSpaceP = false; i++;
+      tokenIntersticeP = false; i++;
     }
   }
+  incrFinishedSubforms();
 }
 
 function indentLines() {

@@ -1,0 +1,7 @@
+; Sample ~/.lispwords for use with scmindent.scm or lispindent.lisp
+; Dorai Sitaram
+; Last modified 2017-12-12
+
+(0 datum->syntax)
+
+(1 call-with-input-file)

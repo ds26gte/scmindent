@@ -1,3 +1,6 @@
+.lispwords.lua
+docs/
 history
 lispindent.lisp
+scmindent.lua
 scmindent.rkt

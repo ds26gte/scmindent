@@ -1,9 +1,11 @@
 {
-  "Last modified": "2014-09-16",
+  "Last modified": "2017-12-12",
   "Description of this file" :
   "Config file used by scmindent.js. Associates an indent number with a Lisp keyword. If keyword A's indent number is N, and a Lisp form introduced by A is split across lines, then if the Ith subform starts one such line, that line is indented by 3 columns past A if I <= N, and by 1 column past A otherwise. This file should be placed in $HOME.",
 
   "block": 0,
+  "call-with-input-file": 1,
+  "call-with-output-file": 1,
   "case": 1,
   "defpackage": 1,
   "defun": 2,

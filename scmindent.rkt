@@ -4,7 +4,7 @@
 
 ;Dorai Sitaram
 ;Oct 8, 1999
-;last change 2016-12-28
+;last change 2017-12-12
 
 ;This script takes lines of Scheme or Lisp code from its
 ;stdin and produces an indented version thereof on its
@@ -56,23 +56,16 @@
                             (cdr w)))
                 (loop)))))))))
 
-(define (past-next-token s i n)
-  (let loop ((i i) (escape? #f))
-    (if (>= i n) i
+(define (past-next-atom s i n)
+  (let loop ((i i))
+    (if (>= i n) n
       (let ((c (string-ref s i)))
-        (cond (escape? (loop (+ i 1) #f))
-              ((char=? c #\\) (loop (+ i 1) #t))
-              ((char=? c #\#)
-               (let ((j (+ i 1)))
-                 (if (>= j n) i
-                   (let ((c (string-ref s j)))
-                     (cond ((char=? c #\\) (loop (+ j 1) #t))
-                           (else i))))))
+        (cond ((char=? c #\\) (loop (+ i 2)))
               ((memv c '(#\space #\tab #\( #\) #\[ #\] #\" #\' #\` #\, #\;))
                i)
-              (else (loop (+ i 1) #f)))))))
+              (else (loop (+ i 1))))))))
 
-(define (lisp-indent-number s)
+(define (get-lisp-indent-number s)
   (let ((c (assf (lambda (a) (string-ci=? s a)) *lisp-keywords*)))
     (cond (c (unbox (cdr c)))
           ((and (>= (string-length s) 3)
@@ -85,21 +78,21 @@
     (or (char? x) (number? x) (string? x))))
 
 (define (calc-subindent s i n)
-  (let* ((j (past-next-token s i n))
-         (num-aligned-subforms 0)
-         (left-indent
-          (if (= j i) 1
+  (let* ((j (past-next-atom s i n))
+         (lisp-indent-num -1)
+         (delta-indent
+          (if (= j i) 0
             (let ((w (substring s i j)))
               (if (and (>= i 2)
                        (memv (string-ref s (- i 2)) '(#\' #\`)))
-                  1
-                (let ((nas (lisp-indent-number w)))
-                  (cond ((>= nas 0) (set! num-aligned-subforms nas)
-                         2)
-                        ((literal-token? w) 1)
-                        ((= j n) 1)
-                        (else (+ (- j i) 2)))))))))
-    (values left-indent num-aligned-subforms (- j 1))))
+                  0
+                 (begin 
+                   (set! lisp-indent-num (get-lisp-indent-number w))
+                   (case lisp-indent-num
+                     ((-2) 0)
+                     ((-1) (if (< j n) (+ (- j i) 1) 1))
+                     (else 1))))))))
+    (values delta-indent lisp-indent-num j)))
 
 (define (num-leading-spaces s)
   (let ((n (string-length s)))
@@ -126,29 +119,30 @@
             (substring s j k))))))
 
 (define-struct lparen
-  (spaces-before num-aligned-subforms (num-finished-subforms #:auto))
-  #:mutable #:auto-value 0)
+  (spaces-before lisp-indent-num num-finished-subforms)
+  #:mutable)
 
 (define (indent-lines)
-  (let ((left-i 0) (paren-stack '()) (stringp #f))
+  (let ((default-left-i -1) (left-i 0) (paren-stack '()) (inside-string? #f))
     (let line-loop ()
       (let ((curr-line (read-line)))
         (unless (eof-object? curr-line)
           (let* ((leading-spaces (num-leading-spaces curr-line))
                  (curr-left-i
-                  (cond (stringp leading-spaces)
-                        ((null? paren-stack)
-                         (when (= left-i 0) (set! left-i leading-spaces))
-                         left-i)
-                        (else (let* ((lp (car paren-stack))
-                                     (nas (lparen-num-aligned-subforms lp))
-                                     (nfs (lparen-num-finished-subforms lp))
-                                     (extra-w 0))
-                                (when (< nfs nas)
-                                  (set-lparen-num-finished-subforms! lp
-                                                                     (+ nfs 1))
-                                  (set! extra-w 2))
-                                (+ (lparen-spaces-before lp) extra-w))))))
+                   (cond (inside-string? leading-spaces)
+                         ((null? paren-stack)
+                          (when (= left-i 0) 
+                            (when (= default-left-i -1)
+                              (set! default-left-i leading-spaces))
+                            (set! left-i default-left-i))
+                          left-i)
+                         (else (let* ((lp (car paren-stack))
+                                      (lin (lparen-lisp-indent-num lp))
+                                      (nfs (lparen-num-finished-subforms lp))
+                                      (extra-w 0))
+                                 (when (< nfs lin)
+                                   (set! extra-w 2))
+                                 (+ (lparen-spaces-before lp) extra-w))))))
             (set! curr-line (string-trim-blanks curr-line))
             (do ((i 0 (+ i 1)))
                 ((= i curr-left-i))
@@ -156,47 +150,63 @@
             (display curr-line) (newline)
             ;
             (let ((n (string-length curr-line))
-                  (escapep #f)
-                  (inter-word-space-p #f))
-              (let loop ((i 0))
-                (unless (>= i n)
-                  (let ((c (string-ref curr-line i)))
-                    (cond (escapep (set! escapep #f) (loop (+ i 1)))
-                          ((char=? c #\\) (set! escapep #t) (loop (+ i 1)))
-                          (stringp
-                           (when (char=? c #\") (set! stringp #f))
-                           (loop (+ i 1)))
-                          ((char=? c #\;) 'break-loop)
-                          ((char=? c #\") (set! stringp #t)
-                           (loop (+ i 1)))
-                          ((memv c '(#\space #\tab))
-                           (unless inter-word-space-p
-                             (set! inter-word-space-p #t)
-                             (cond ((and (pair? paren-stack)
-                                         (car paren-stack)) =>
-                                    (lambda (lp)
-                                      (let ((nfs (lparen-num-finished-subforms lp)))
-                                        (set-lparen-num-finished-subforms! lp (+ nfs 1)))))))
-                           (loop (+ i 1)))
-                          ((memv c '(#\( #\[))
-                           (set! inter-word-space-p #f)
-                           (let-values (((left-indent
-                                          num-aligned-subforms
-                                          j)
-                                         (calc-subindent curr-line (+ i 1) n)))
-                             (set! paren-stack
-                                   (cons (make-lparen (+ i curr-left-i left-indent)
-                                                      num-aligned-subforms)
-                                         paren-stack))
-                             (loop (+ j 1))))
-                          ((memv c '(#\) #\]))
-                           (set! inter-word-space-p #f)
-                           (cond (paren-stack
-                                  (set! paren-stack (cdr paren-stack)))
-                                 (else (set! left-i 0)))
-                           (loop (+ i 1)))
-                          (else (set! inter-word-space-p #f)
-                                (loop (+ i 1)))))))))
+                  (escape? #f)
+                  (token-interstice? #f))
+              (let ((incr-finished-subforms (lambda ()
+                                              (unless token-interstice?
+                                                (cond ((and (pair? paren-stack)
+                                                            (car paren-stack)) =>
+                                                       (lambda (lp)
+                                                         (let ((nfs (lparen-num-finished-subforms lp)))
+                                                           (set-lparen-num-finished-subforms! 
+                                                             lp (+ nfs 1))))))
+                                                (set! token-interstice? #t)))))
+                (let loop ((i 0))
+                  (unless (>= i n)
+                    (let ((c (string-ref curr-line i)))
+                      (cond (escape? (set! escape? #f) (loop (+ i 1)))
+                            ((char=? c #\\) 
+                             (set! token-interstice? #f)
+                             (set! escape? #t) (loop (+ i 1)))
+                            (inside-string?
+                              (when (char=? c #\") 
+                                (set! inside-string? #f)
+                                (incr-finished-subforms))
+                              (loop (+ i 1)))
+                            ((char=? c #\;) 
+                             (incr-finished-subforms) 
+                             'break-loop)
+                            ((char=? c #\") 
+                             (incr-finished-subforms)
+                             (set! inside-string? #t)
+                             (loop (+ i 1)))
+                            ((memv c '(#\space #\tab))
+                             (incr-finished-subforms)
+                             (loop (+ i 1)))
+                            ((memv c '(#\( #\[))
+                             (incr-finished-subforms)
+                             (let-values (((delta-indent lisp-indent-num j)
+                                           (calc-subindent curr-line (+ i 1) n)))
+                               (set! paren-stack
+                                 (cons (make-lparen (+ 1 i curr-left-i delta-indent)
+                                                    lisp-indent-num
+                                                    -1)
+                                       paren-stack))
+                               (set! token-interstice? #t)
+                               (let ((inext (+ i 1)))
+                                 (when (> j inext)
+                                   (set! inext j)
+                                   (set! token-interstice? #f))
+                                 (loop inext))))
+                            ((memv c '(#\) #\]))
+                             (set! token-interstice? #f)
+                             (cond ((pair? paren-stack)
+                                    (set! paren-stack (cdr paren-stack)))
+                                   (else (set! left-i 0)))
+                             (loop (+ i 1)))
+                            (else (set! token-interstice? #f)
+                                  (loop (+ i 1)))))))
+                (incr-finished-subforms))))
           (line-loop))))))
 
 (read-home-lispwords)
