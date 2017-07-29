@@ -1,4 +1,4 @@
-% last modified 2016-12-28
+% last modified 2017-07-29
 \input tex2page
 \input tgtermes
 \input ubuntu
@@ -49,11 +49,12 @@ support over the years, and provides the `lispwords` option, continues to fail i
 
 Fortunately, both vi and Vim let you delegate the responsibility
 for indenting such code to an external filter program of your
-choosing.  I provide here three such filtering scripts:
+choosing.  I provide here four such filtering scripts:
 \urlh{https://github.com/ds26gte/scmindent/blob/master/scmindent.rkt}{scmindent.rkt}
 written in Racket,
 \urlh{https://github.com/ds26gte/scmindent/blob/master/lispindent.lisp}{lispindent.lisp} in Common
-Lisp, and
+Lisp,
+\urlh{https://github.com/ds26gte/scmindent/blob/master/scmindent.lua}{scmindent.lua} in Lua, and
 \urlh{https://github.com/ds26gte/scmindent/blob/master/scmindent.js}{scmindent.js} in JavaScript.
 
 \beginsection Installation
@@ -63,12 +64,15 @@ and CL scripts are
 operationally identical and use the same type of customization
 via the file `~/.lispwords`.
 
-The JavaScript version differs only in that its
-customization file is named
+The Lua and JavaScript versions differ from the above in having their own format for the
+customization file.
+The Lua file is named \urlh{https://github.com/ds26gte/scmindent/blob/master/.lispwords.lua}{.lispwords.lua}
+and uses a Lua table.
+The JavaScript file is named
 \urlh{https://github.com/ds26gte/scmindent/blob/master/lispwords.json}{lispwords.json} and uses
 JSON.
 
-To use either of `scmindent.rkt`, `lispindent.lisp`, or
+To use either of `scmindent.rkt`, `lispindent.lisp`, `scmindent.lua`, or
 `scmindent.js`, place them in your `PATH`. Alternatively,
 the JavaScript version is also available as a Node
 package:
@@ -80,7 +84,7 @@ This directly installs the executable `scmindent` in your `PATH`.
 
 Henceforth, I will refer to just `scmindent.rkt` with the understanding that
 everything mentioned applies equally to `lispindent.lisp`,
-`scmindent.js`, and the NPM version `scmindent`.
+`scmindent.lua`, `scmindent.js`, and the NPM version `scmindent`.
 
 \beginsection Usage
 
@@ -247,9 +251,30 @@ prove to be better choices than 3.  The author has made 2 the default
 because it is the only option that has the merit of indenting the then-
 and else-subforms by differing amounts.)
 
+\beginsection Customization (`.lispwords.lua`)
+
+`.lispwords.lua`, used by the Lua version, employs a different
+format than `.lispwords`. The global `lispwords` is assigned a
+Lua table, whose keys are strings corresponding to Lisp keywords,
+and whose values are their corresponding Lisp indent numbers.
+Keywords sharing the same Lisp indent number cannot be bunched.
+E.g., the example `.lispwords` above will be specified as follows
+in `.lispwords.lua`:
+
+\verb{
+lispwords = {
+  ['begin0'] = 0,
+  ['when'] = 1,
+  ['unless'] = 1,
+  ['do'] = 2,
+  ['defun'] = 2,
+}
+}
+
+
 \beginsection Customization (`lispwords.json`)
 
-`lispwords.json`, used by the JavaScript version, employs a slightly more verbose format
+`lispwords.json`, used by the JavaScript version, employs a different format
 than `.lispwords` in order to accommodate JSON. Keywords are
 specified as keys, the Lisp indent numbers as values, and
 keywords sharing the same Lisp indent number cannot be bunched.

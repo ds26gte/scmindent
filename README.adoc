@@ -1,4 +1,4 @@
-// last modified 2016-11-11
+// last modified 2017-07-29
 = Editing Lisp and Scheme files in vi
 
 The ability to automatically indent code is indispensable when
@@ -22,9 +22,10 @@ continues to fail in link:vim-indent-error.lisp[strange ways].
 
 Fortunately, both vi and Vim let you delegate the responsibility
 for indenting such code to an external filter program of your
-choosing.  I provide here three such filtering scripts:
+choosing.  I provide here four such filtering scripts:
 link:scmindent.rkt[] written in Racket, link:lispindent.lisp[] in
-Common Lisp, and link:scmindent.js[] in JavaScript.
+Common Lisp, link:scmindent.lua in Lua, and link:scmindent.js[]
+in JavaScript.
 
 For more details, please see
 https://ds26gte.github.io/scmindent/index.html.
