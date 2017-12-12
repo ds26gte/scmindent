@@ -1,9 +1,9 @@
-// last modified 2017-12-11
+// last modified 2017-12-12
 = Editing Lisp and Scheme files in vi
 
-[quote, Paul Fox, vile developer]
+[quote]
 But then, when was the last time you heard
-of a lisp programmer that used vi?
+of a lisp programmer that used vi? (Paul Fox, vile developer)
 
 The ability to automatically indent code is indispensable when
 editing files containing s-expression-based code such as Racket,
