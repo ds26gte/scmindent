@@ -79,7 +79,7 @@ based on its extension:
 
 or its filetype:
 
-autocmd filetype lisp,scheme setlocal equalprg=scmindent.rkt
+  autocmd filetype lisp,scheme setlocal equalprg=scmindent.rkt
 
 In vi's other than Vim, use the `!` command to invoke the filter on part or all of
 your buffer: Type `!` to declare you'll be filtering; a movement command
