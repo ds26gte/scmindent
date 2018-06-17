@@ -1,10 +1,10 @@
 #! /usr/bin/env racket
 
-#lang racket
+#lang racket/base
 
 ;Dorai Sitaram
 ;Oct 8, 1999
-;last change 2017-12-12
+;last change 2018-06-17
 
 ;This script takes lines of Scheme or Lisp code from its
 ;stdin and produces an indented version thereof on its
