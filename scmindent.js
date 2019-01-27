@@ -156,8 +156,8 @@ function indentLine(currLine) {
       });
       tokenIntersticeP = true;
       var iNext = i+1;
-      if (si.j > iNext) {
-        iNext = j;
+      if (si.nextTokenIndex > iNext) {
+        iNext = si.nextTokenIndex;
         tokenIntersticeP = false;
       }
       i = iNext;
