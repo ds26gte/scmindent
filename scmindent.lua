@@ -1,7 +1,7 @@
 #! /usr/bin/env lua
 
 -- Dorai Sitaram
--- Last modified 2017-12-10
+-- Last modified 2019-11-12
 
 -- Find if this file is being run within Neovim Lua.
 
@@ -23,9 +23,17 @@ function file_exists(f)
   end
 end
 
-local lwfile = os.getenv('HOME') .. '/.lispwords.lua'
+local lwfile
 
-local lispwords = file_exists(lwfile) and dofile(lwfile) or {}
+if running_in_neovim then
+  lwfile = (os.getenv('NVIM_LISPWORDS') or os.getenv('LISPWORDS'))
+else
+  lwfile = (os.getenv('LISPWORDS') or os.getenv('NVIM_LISPWORDS'))
+end
+
+lwfile = (lwfile or (os.getenv('HOME') .. '/.lispwords.lua'))
+
+local basic_lispwords = (file_exists(lwfile) and dofile(lwfile) or {})
 
 function split_string(s, c)
   local r = {}
@@ -45,19 +53,36 @@ function split_string(s, c)
   return r
 end
 
-if running_in_neovim then
-  do
-    local vimlw = split_string(vim.api.nvim_get_option('lw'), ',')
-    for _,w in ipairs(vimlw) do
-      if not lispwords[w] then
-        lispwords[w] = 0
-      end
-    end
-  end
+local lispwords
+
+if not running_in_neovim then
+  lispwords = basic_lispwords
 end
 
-function string_trim_blanks(s)
-  return string.gsub(string.gsub(s, '^%s+', ''), '%s+$', '')
+function get_lw_option(buf)
+  local function get_local_lw_option ()
+    return vim.api.nvim_buf_get_option(buf, 'lw')
+  end
+  local succeeded, lw = pcall(get_local_lw_option)
+  if not succeeded then
+    lw = vim.api.nvim_get_option('lw')
+  end
+  return lw
+end
+
+local prevailing_filetype
+
+function slurp_in_lw(buf)
+  lispwords = {}
+  for w,n in pairs(basic_lispwords) do
+    lispwords[w] = n
+  end
+  local vimlw = split_string(get_lw_option(buf), ',')
+  for _,w in ipairs(vimlw) do
+    if not lispwords[w] then
+      lispwords[w] = 0
+    end
+  end
 end
 
 function is_literal_token(s)
@@ -143,12 +168,11 @@ function num_leading_spaces(s)
   end
 end
 
-function do_indent(curr_buf, pnum, lnum)
+function do_indent(curr_buf, cnum, lnum)
   local default_left_i = -1
   local left_i = 0
   local paren_stack = {}
   local is_inside_string = false
-  local cnum = pnum
   while true do
     local curr_line
     if running_in_neovim then
@@ -182,16 +206,16 @@ function do_indent(curr_buf, pnum, lnum)
     if running_in_neovim and cnum == lnum then
       return curr_left_i
     end
-    curr_line = string_trim_blanks(curr_line)
+    curr_line = curr_line:gsub('^%s+', ''):gsub('%s+$', '')
     if not running_in_neovim then
       io.write(string.rep(' ', curr_left_i), curr_line, '\n')
     end
     --
     local n = #curr_line
     local is_escape = false
-    local is_token_interstice = false
+    local is_token_interstice = true
     local function incr_finished_subforms()
-      if not is_token_interstice then
+      if not is_token_interstice and not is_inside_string then
         if #paren_stack > 0 then
           paren_stack[1].num_finished_subforms = paren_stack[1].num_finished_subforms + 1
         end
@@ -200,7 +224,7 @@ function do_indent(curr_buf, pnum, lnum)
     end
     local i = 1
     while i <= n do
-      local c = string.sub(curr_line, i, i)
+      local c = curr_line:sub(i, i)
       if is_escape then
         is_escape = false; i = i+1
       elseif c == '\\' then
@@ -217,7 +241,9 @@ function do_indent(curr_buf, pnum, lnum)
         break
       elseif c == '"' then
         incr_finished_subforms()
-        is_inside_string = true; i = i+1
+        is_inside_string = true;
+        is_token_interstice = false;
+        i = i+1
       elseif c == ' ' or c == '\t' then
         incr_finished_subforms()
         i = i+1
@@ -252,16 +278,23 @@ function do_indent(curr_buf, pnum, lnum)
       end
     end
     incr_finished_subforms()
-    cnum = cnum+1
+    if running_in_neovim then
+      cnum = cnum+1
+    end
   end
 end
 
-local neoscmindent = {}
+local scmindent = {}
 
 if running_in_neovim then
-  neoscmindent.GetScmIndent = function(lnum1)
+  scmindent.GetScmIndent = function(lnum1)
     local lnum = lnum1 - 1 -- convert to 0-based line number
     local curr_buf = vim.api.nvim_get_current_buf()
+    local curr_filetype = vim.api.nvim_buf_get_option(buf, 'filetype')
+    if curr_filetype ~= prevailing_filetype then
+      prevailing_filetype = curr_filetype
+      slurp_in_lw(curr_buf)
+    end
     --
     -- pnum is determined by going up until you cross two contiguous blank
     -- regions (if possible), then finding the first nonblank after that.
@@ -272,7 +305,7 @@ if running_in_neovim then
     local currently_blank = false
     while pnum > 0 do
       local pstr = vim.api.nvim_buf_get_lines(curr_buf, pnum, pnum+1, 1)[1]
-      if pstr:match("%s*$") then
+      if pstr:match("^%s*$") then
         if currently_blank then
           do end
         elseif one_blank_seen then
@@ -293,7 +326,7 @@ if running_in_neovim then
 end
 
 if running_in_neovim then
-  return neoscmindent
+  return scmindent
 else
   do_indent(false, 1, 1)
 end

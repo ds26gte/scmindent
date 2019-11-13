@@ -11,7 +11,7 @@
 
 ;Dorai Sitaram
 ;Oct 8, 1999
-;last change 2019-11-12
+;last change 2019-11-13
 
 ;this script takes lines of Lisp or Scheme code from its
 ;stdin and produces an indented version thereof on its
@@ -67,13 +67,13 @@
                   (t (set-lisp-indent-number a (cadr w))))))))))
 
 (defun past-next-atom (s i n)
-    (loop
-      (when (>= i n) (return n))
-      (let ((c (char s i)))
-        (cond ((char= c #\\) (incf i))
-              ((member c '(#\space #\tab #\( #\) #\[ #\] #\" #\' #\` #\, #\;))
-               (return i))))
-      (incf i)))
+  (loop
+    (when (>= i n) (return n))
+    (let ((c (char s i)))
+      (cond ((char= c #\\) (incf i))
+            ((member c '(#\space #\tab #\( #\) #\[ #\] #\" #\' #\` #\, #\;))
+             (return i))))
+    (incf i)))
 
 (defun get-lisp-indent-number (s &optional (possible-keyword-p t))
   (or (cdr (assoc s *lisp-keywords* :test #'string-equal))
