@@ -1,8 +1,4 @@
-":";if test -z "$LISP"; then
-":";  if test "$USER" = evalwhen; then LISP=ecl
-":";  elif test "$(arch 2>/dev/null)" = ppc; then LISP=clozure
-":";  else LISP=sbcl
-":";  fi; fi
+":";if test -z "$LISP"; then LISP=ecl; fi
 ":";if test "$LISP" = clisp; then exec clisp -q $0
 ":";elif test "$LISP" = clozure; then exec ccl -b -Q -l $0
 ":";elif test "$LISP" = ecl; then exec ecl -shell $0
@@ -52,8 +48,21 @@
     multiple-value-bind
     with-slots))
 
+(defun retrieve-env (s)
+  (declare (string s))
+  #+abcl (ext:getenv s)
+  #+allegro (sys:getenv s)
+  #+clisp (ext:getenv s)
+  #+clozure (ccl:getenv s)
+  #+cmucl (cdr (assoc (intern s :keyword)
+                      ext:*environment-list* :test #'string=))
+  #+ecl (ext:getenv s)
+  #+mkcl (mkcl:getenv s)
+  #+sbcl (sb-ext:posix-getenv s))
+
 (defun read-home-lispwords ()
-  (with-open-file (i (merge-pathnames ".lispwords" (user-homedir-pathname))
+  (with-open-file (i (or (retrieve-env "LISPWORDS")
+                         (merge-pathnames ".lispwords" (user-homedir-pathname)))
                      :if-does-not-exist nil)
     (when i
       (loop

@@ -4,7 +4,7 @@
 
 ;Dorai Sitaram
 ;Oct 8, 1999
-;last change 2019-11-12
+;last change 2019-11-13
 
 ;This script takes lines of Scheme or Lisp code from its
 ;stdin and produces an indented version thereof on its
@@ -44,7 +44,8 @@
             with-slots))
 
 (define (read-home-lispwords)
-  (let ([init-file (build-path (find-system-path 'home-dir) ".lispwords")])
+  (let ([init-file (or (getenv "LISPWORDS")
+                       (build-path (find-system-path 'home-dir) ".lispwords"))])
     (when (file-exists? init-file)
       (call-with-input-file init-file
         (lambda (i)

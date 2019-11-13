@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Dorai Sitaram
-// last modified 2017-12-11
+// last modified 2019-11-13
 
 // this script takes lines of Lisp or Scheme code from its
 // stdin and produces an indented version thereof on its
@@ -200,18 +200,18 @@ function indentLines() {
 }
 
 function customize() {
-  fs.readFile(process.env.HOME + '/lispwords.json', 'utf8',
-      function(err, data) {
-        if (!err) {
-          var lw = JSON.parse(data);
-          for (var kw in lw) {
-            lispKeywords[kw] = lw[kw];
-          }
-        } else {
-          // process.stderr.write('~/lispwords.json missing or ill-formed\n');
+  fs.readFile(process.env.LISPWORDS || (process.env.HOME + '/lispwords.json'), 'utf8',
+    function(err, data) {
+      if (!err) {
+        var lw = JSON.parse(data);
+        for (var kw in lw) {
+          lispKeywords[kw] = lw[kw];
         }
-        tbd.emit('customizationDone');
-      });
+      } else {
+        // process.stderr.write('~/lispwords.json missing or ill-formed\n');
+      }
+      tbd.emit('customizationDone');
+    });
 }
 
 tbd.on('start', customize);

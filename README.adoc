@@ -1,4 +1,4 @@
-// last modified 2019-11-12
+// last modified 2019-11-13
 = Editing Lisp and Scheme files in vi
 
 [quote]
@@ -167,8 +167,18 @@ have an LIN of 0.
 
 == Customization
 
-You can specify your own LINs for keywords in the file
-`.lispwords` in your home directory.  `~/.lispwords` can contain any number of
+You can specify your own LINs for keywords via a customization
+file. The name of the file is the first available of the
+following:
+
+- the value of the environment variable `LISPWORDS`, if set
+- the file `.lispwords` in your home directory
+
+If `LISPWORDS` isn't set and `~/.lispwords` doesn't exist, no
+customization is done. If `LISPWORDS` is set but the thus named
+file doesn't exist, no customization is done.
+
+`~/.lispwords` can contain any number of
 2-element lists: The first element of each list is a Lisp symbol
 and the second element is the LIN associated with
 it. E.g.,
@@ -215,7 +225,7 @@ To remove the keywordness of a symbol, you can assign it a LIN
 
   (if -1)
 
-would also cause all of ``if``'s subforms to be aligned.  (This is because
+would also cause all of ``if```'s subforms to be aligned.  (This is because
 −1 causes subforms on subsequent lines to line up against the first
 argument subform on the first line, and that happens to be 3 columns
 past the beginning of a 2-column keyword like `if`.  The only difference
