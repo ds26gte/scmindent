@@ -4,7 +4,7 @@
 
 ;Dorai Sitaram
 ;Oct 8, 1999
-;last change 2018-06-17
+;last change 2019-11-12
 
 ;This script takes lines of Scheme or Lisp code from its
 ;stdin and produces an indented version thereof on its
@@ -44,16 +44,21 @@
             with-slots))
 
 (define (read-home-lispwords)
-  (let ((init-file (build-path (find-system-path 'home-dir) ".lispwords")))
+  (let ([init-file (build-path (find-system-path 'home-dir) ".lispwords")])
     (when (file-exists? init-file)
       (call-with-input-file init-file
         (lambda (i)
           (let loop ()
-            (let ((w (read i)))
+            (let ([w (read i)])
               (unless (eof-object? w)
-                (let ((n (car w)))
-                  (for-each (lambda (x) (set-lisp-indent-number x n))
-                            (cdr w)))
+                (let ([a (car w)])
+                  (cond [(number? a)
+                         (for-each (lambda (x) (set-lisp-indent-number x a)) (cdr w))]
+                        [(list? a)
+                         (let ([n (cadr w)])
+                           (for-each (lambda (x) (set-lisp-indent-number x n)) a))]
+                        [else
+                          (set-lisp-indent-number a (cadr w))]))
                 (loop)))))))))
 
 (define (past-next-atom s i n)
@@ -86,7 +91,7 @@
               (if (and (>= i 2)
                        (memv (string-ref s (- i 2)) '(#\' #\`)))
                   0
-                 (begin 
+                 (begin
                    (set! lisp-indent-num (get-lisp-indent-number w))
                    (case lisp-indent-num
                      ((-2) 0)
@@ -131,7 +136,7 @@
                  (curr-left-i
                    (cond (inside-string? leading-spaces)
                          ((null? paren-stack)
-                          (when (= left-i 0) 
+                          (when (= left-i 0)
                             (when (= default-left-i -1)
                               (set! default-left-i leading-spaces))
                             (set! left-i default-left-i))
@@ -158,25 +163,25 @@
                                                             (car paren-stack)) =>
                                                        (lambda (lp)
                                                          (let ((nfs (lparen-num-finished-subforms lp)))
-                                                           (set-lparen-num-finished-subforms! 
+                                                           (set-lparen-num-finished-subforms!
                                                              lp (+ nfs 1))))))
                                                 (set! token-interstice? #t)))))
                 (let loop ((i 0))
                   (unless (>= i n)
                     (let ((c (string-ref curr-line i)))
                       (cond (escape? (set! escape? #f) (loop (+ i 1)))
-                            ((char=? c #\\) 
+                            ((char=? c #\\)
                              (set! token-interstice? #f)
                              (set! escape? #t) (loop (+ i 1)))
                             (inside-string?
-                              (when (char=? c #\") 
+                              (when (char=? c #\")
                                 (set! inside-string? #f)
                                 (incr-finished-subforms))
                               (loop (+ i 1)))
-                            ((char=? c #\;) 
-                             (incr-finished-subforms) 
+                            ((char=? c #\;)
+                             (incr-finished-subforms)
                              'break-loop)
-                            ((char=? c #\") 
+                            ((char=? c #\")
                              (incr-finished-subforms)
                              (set! inside-string? #t)
                              (loop (+ i 1)))

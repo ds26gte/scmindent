@@ -11,7 +11,7 @@
 
 ;Dorai Sitaram
 ;Oct 8, 1999
-;last change 2017-12-12
+;last change 2019-11-12
 
 ;this script takes lines of Lisp or Scheme code from its
 ;stdin and produces an indented version thereof on its
@@ -19,20 +19,19 @@
 
 (defvar *lisp-keywords* '())
 
-(defun define-with-lisp-indent-number (n syms)
-  (dolist (sym syms)
-    (let* ((x (symbol-name sym))
-           (c (assoc x *lisp-keywords* :test #'string-equal)))
-      (unless c
-        (push (setq c (cons x nil)) *lisp-keywords*))
-      (setf (cdr c) n))))
+(defun set-lisp-indent-number (sym num-of-subforms-to-be-indented-wide)
+  (let* ((x (symbol-name sym))
+         (c (assoc x *lisp-keywords* :test #'string-equal)))
+    (unless c
+      (push (setq c (cons x nil)) *lisp-keywords*))
+    (setf (cdr c) num-of-subforms-to-be-indented-wide)))
 
-(define-with-lisp-indent-number 0
+(mapc (lambda (s) (set-lisp-indent-number s 0))
   '(block
     handler-bind
     loop))
 
-(define-with-lisp-indent-number 1
+(mapc (lambda (s) (set-lisp-indent-number s 1))
   '(case
     defpackage do-all-symbols do-external-symbols dolist do-symbols dotimes
     ecase etypecase eval-when
@@ -46,19 +45,26 @@
     when with-input-from-string with-open-file with-open-socket
     with-open-stream with-output-to-string))
 
-(define-with-lisp-indent-number 2
+(mapc (lambda (s) (set-lisp-indent-number s 2))
   '(assert
     defun destructuring-bind do do*
     if
     multiple-value-bind
     with-slots))
 
-(with-open-file (i (merge-pathnames ".lispwords" (user-homedir-pathname))
-                   :if-does-not-exist nil)
-  (when i
-    (loop
-      (let ((w (or (read i nil) (return))))
-        (define-with-lisp-indent-number (car w) (cdr w))))))
+(defun read-home-lispwords ()
+  (with-open-file (i (merge-pathnames ".lispwords" (user-homedir-pathname))
+                     :if-does-not-exist nil)
+    (when i
+      (loop
+        (let ((w (or (read i nil) (return))))
+          (let ((a (car w)))
+            (cond ((numberp a)
+                   (mapc (lambda (x) (set-lisp-indent-number x a)) (cdr w)))
+                  ((consp a)
+                   (let ((n (cadr w)))
+                     (mapc (lambda (x) (set-lisp-indent-number x n)) a)))
+                  (t (set-lisp-indent-number a (cadr w))))))))))
 
 (defun past-next-atom (s i n)
     (loop
@@ -150,7 +156,7 @@
           (flet ((incr-finished-subforms ()
                                          (unless token-interstice-p
                                            (when paren-stack
-                                             (incf (lparen-num-finished-subforms 
+                                             (incf (lparen-num-finished-subforms
                                                      (car paren-stack))))
                                            (setq token-interstice-p t))))
             ;
@@ -159,7 +165,7 @@
               (let ((c (char curr-line i)))
                 (cond (escapep (setq escapep nil))
                       ((char= c #\\) (setq token-interstice nil escapep t))
-                      (inside-stringp (when (char= c #\") 
+                      (inside-stringp (when (char= c #\")
                                         (setq inside-stringp nil)
                                         (incr-finished-subforms)))
                       ((char= c #\;) (incr-finished-subforms) (return))
@@ -186,6 +192,8 @@
                       (t (setq token-interstice-p nil))))
               (incf i))
             (incr-finished-subforms)))))))
+
+(read-home-lispwords)
 
 (indent-lines)
 
