@@ -7,7 +7,7 @@
 
 ;Dorai Sitaram
 ;Oct 8, 1999
-;last change 2019-11-13
+;last change 2019-11-17
 
 ;this script takes lines of Lisp or Scheme code from its
 ;stdin and produces an indented version thereof on its
@@ -21,32 +21,6 @@
     (unless c
       (push (setq c (cons x nil)) *lisp-keywords*))
     (setf (cdr c) num-of-subforms-to-be-indented-wide)))
-
-(mapc (lambda (s) (set-lisp-indent-number s 0))
-  '(block
-    handler-bind
-    loop))
-
-(mapc (lambda (s) (set-lisp-indent-number s 1))
-  '(case
-    defpackage do-all-symbols do-external-symbols dolist do-symbols dotimes
-    ecase etypecase eval-when
-    flet
-    handler-case
-    labels lambda let let* let-values
-    macrolet
-    prog1
-    typecase
-    unless unwind-protect
-    when with-input-from-string with-open-file with-open-socket
-    with-open-stream with-output-to-string))
-
-(mapc (lambda (s) (set-lisp-indent-number s 2))
-  '(assert
-    defun destructuring-bind do do*
-    if
-    multiple-value-bind
-    with-slots))
 
 (defun retrieve-env (s)
   (declare (string s))
@@ -174,7 +148,7 @@
               (let ((c (char curr-line i)))
                 (cond (escapep (setq escapep nil))
                       ((char= c #\\) (setq token-interstice-p nil escapep t))
-                      (inside-stringp (when (char= c #\") 
+                      (inside-stringp (when (char= c #\")
                                         (setq inside-stringp nil)
                                         (incr-finished-subforms)))
                       ((char= c #\;) (incr-finished-subforms) (return))

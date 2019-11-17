@@ -1,7 +1,28 @@
 ; Sample ~/.lispwords for use with scmindent.scm or lispindent.lisp
 ; Dorai Sitaram
-; Last modified 2017-12-12
+; Last modified 2019-11-17
 
-(0 datum->syntax)
+((block
+   datum->syntax
+   handler-bind
+   loop) 0)
 
-(1 call-with-input-file)
+((case
+   call-with-input-file
+   defpackage do-all-symbols do-external-symbols dolist do-symbols dotimes
+   ecase etypecase eval-when
+   flet
+   handler-case
+   labels lambda let let* let-values
+   macrolet
+   prog1
+   typecase
+   unless unwind-protect
+   when with-input-from-string with-open-file with-open-socket
+   with-open-stream with-output-to-string) 1)
+
+((assert
+   defun destructuring-bind do do*
+   if
+   multiple-value-bind
+   with-slots) 2)

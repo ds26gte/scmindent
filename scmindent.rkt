@@ -4,7 +4,7 @@
 
 ;Dorai Sitaram
 ;Oct 8, 1999
-;last change 2019-11-13
+;last change 2019-11-17
 
 ;This script takes lines of Scheme or Lisp code from its
 ;stdin and produces an indented version thereof on its
@@ -19,29 +19,6 @@
       (set! c (cons x (box 0)))
       (set! *lisp-keywords* (cons c *lisp-keywords*)))
     (set-box! (cdr c) num-of-subforms-to-be-indented-wide)))
-
-(for-each (lambda (s) (set-lisp-indent-number s 0))
-          '(block
-            handler-bind
-            loop))
-
-(for-each (lambda (s) (set-lisp-indent-number s 1))
-          '(case
-            defpackage dolist dotimes
-            ecase etypecase eval-when
-            flet
-            labels lambda let let* let-values
-            prog1
-            typecase
-            unless unwind-protect
-            when with-input-from-string with-open-file with-open-socket
-            with-open-stream with-output-to-string))
-
-(for-each (lambda (s) (set-lisp-indent-number s 2))
-          '(defun destructuring-bind do do*
-            if
-            multiple-value-bind
-            with-slots))
 
 (define (read-home-lispwords)
   (let ([init-file (or (getenv "LISPWORDS")
