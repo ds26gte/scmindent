@@ -131,7 +131,7 @@
                           (+ (lparen-spaces-before lp)
                              extra-w))))))
         (setq curr-line (string-trim-blanks curr-line))
-        (dotimes (k curr-left-i) (write-char #\space))
+        (unless (zerop (length curr-line)) (dotimes (k curr-left-i) (write-char #\space)))
         (princ curr-line) (terpri)
         ;
         (let ((i 0) (n (length curr-line)) (escapep nil)
