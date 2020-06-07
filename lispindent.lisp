@@ -126,7 +126,8 @@
                                (nfs (lparen-num-finished-subforms lp))
                                (extra-w 0))
                           (when (< nfs nas) ;(and (>= nas 0) (< nfs nas))
-                            (incf (lparen-num-finished-subforms lp))
+                            (unless (char= (char curr-line leading-spaces) #\;)
+                              (incf (lparen-num-finished-subforms lp)))
                             (setq extra-w 2))
                           (+ (lparen-spaces-before lp)
                              extra-w))))))
@@ -135,7 +136,8 @@
         (princ curr-line) (terpri)
         ;
         (let ((i 0) (n (length curr-line)) (escapep nil)
-              (token-interstice-p nil))
+              (token-interstice-p nil)
+              (commented-p nil))
           (flet ((incr-finished-subforms ()
                                          (unless token-interstice-p
                                            (when paren-stack
@@ -151,7 +153,7 @@
                       (inside-stringp (when (char= c #\")
                                         (setq inside-stringp nil)
                                         (incr-finished-subforms)))
-                      ((char= c #\;) (incr-finished-subforms) (return))
+                      ((char= c #\;) (setf commented-p t) (return))
                       ((char= c #\") (incr-finished-subforms) (setq inside-stringp t))
                       ((member c '(#\space #\tab) :test #'char=)
                        (incr-finished-subforms))
@@ -174,7 +176,7 @@
                              (t (setq left-i 0))))
                       (t (setq token-interstice-p nil))))
               (incf i))
-            (incr-finished-subforms)))))))
+            (unless commented-p (incr-finished-subforms))))))))
 
 (read-home-lispwords)
 
