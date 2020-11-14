@@ -1,7 +1,7 @@
 #! /usr/bin/env lua
 
 -- Dorai Sitaram
--- Last modified 2019-11-12
+-- Last modified 2020-11-14
 
 -- Find if this file is being run within Neovim Lua.
 
@@ -208,7 +208,10 @@ function do_indent(curr_buf, cnum, lnum)
     end
     curr_line = curr_line:gsub('^%s+', ''):gsub('%s+$', '')
     if not running_in_neovim then
-      io.write(string.rep(' ', curr_left_i), curr_line, '\n')
+      if curr_line ~= "" then
+        io.write(string.rep(' ', curr_left_i), curr_line)
+      end
+      io.write('\n')
     end
     --
     local n = #curr_line

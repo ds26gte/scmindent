@@ -7,7 +7,7 @@
 
 ;Dorai Sitaram
 ;Oct 8, 1999
-;last change 2019-11-17
+;last change 2020-11-14
 
 ;this script takes lines of Lisp or Scheme code from its
 ;stdin and produces an indented version thereof on its
@@ -131,8 +131,10 @@
                           (+ (lparen-spaces-before lp)
                              extra-w))))))
         (setq curr-line (string-trim-blanks curr-line))
-        (dotimes (k curr-left-i) (write-char #\space))
-        (princ curr-line) (terpri)
+        (unless (string= curr-line "")
+          (dotimes (k curr-left-i) (write-char #\space))
+          (princ curr-line))
+        (terpri)
         ;
         (let ((i 0) (n (length curr-line)) (escapep nil)
               (token-interstice-p nil))

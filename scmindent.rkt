@@ -4,7 +4,7 @@
 
 ;Dorai Sitaram
 ;Oct 8, 1999
-;last change 2019-11-17
+;last change 2020-11-14
 
 ;This script takes lines of Scheme or Lisp code from its
 ;stdin and produces an indented version thereof on its
@@ -127,10 +127,12 @@
                                    (set! extra-w 2))
                                  (+ (lparen-spaces-before lp) extra-w))))))
             (set! curr-line (string-trim-blanks curr-line))
-            (do ((i 0 (+ i 1)))
+            (unless (string=? curr-line "")
+              (do ((i 0 (+ i 1)))
                 ((= i curr-left-i))
-              (write-char #\space))
-            (display curr-line) (newline)
+                (write-char #\space))
+              (display curr-line))
+            (newline)
             ;
             (let ((n (string-length curr-line))
                   (escape? #f)

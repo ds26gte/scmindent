@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Dorai Sitaram
-// last modified 2019-11-13
+// last modified 2020-11-14
 
 // this script takes lines of Lisp or Scheme code from its
 // stdin and produces an indented version thereof on its
@@ -116,10 +116,12 @@ function indentLine(currLine) {
     }
   }
   currLine = stringTrimBlanks(currLine);
-  for (var i = 0; i < currLeftI; i++) {
-    process.stdout.write(' ');
+  if (currLine !== "") {
+    for (var i = 0; i < currLeftI; i++) {
+      process.stdout.write(' ');
+    }
+    process.stdout.write(currLine);
   }
-  process.stdout.write(currLine);
   process.stdout.write('\n');
 
   var escapeP = false;
