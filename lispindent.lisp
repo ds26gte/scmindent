@@ -112,12 +112,13 @@
   (string-trim '(#\space #\tab #\newline #\return) s))
 
 (defun indent-lines ()
-  (let ((left-i 0) (paren-stack '()) (inside-stringp nil))
+  (let ((left-i 0) (paren-stack '()) (inside-stringp nil) (inside-comment-region-p nil))
     (loop
       (let* ((curr-line (or (read-line nil nil) (return)))
              (leading-spaces (num-leading-spaces curr-line))
              (curr-left-i
                (cond (inside-stringp leading-spaces)
+                     (inside-comment-region-p leading-spaces)
                      ((null paren-stack)
                       (when (= left-i 0) (setq left-i leading-spaces))
                       left-i)
@@ -137,6 +138,8 @@
         (terpri)
         ;
         (let ((i 0) (n (length curr-line)) (escapep nil)
+              (reader-macro-p nil)
+              (comment-region-maybe-end-p nil)
               (token-interstice-p nil))
           (flet ((incr-finished-subforms ()
                                          (unless token-interstice-p
@@ -148,7 +151,13 @@
             (loop
               (when (>= i n) (return))
               (let ((c (char curr-line i)))
-                (cond (escapep (setq escapep nil))
+                (cond ((and reader-macro-p (char= c #\|)) (setq reader-macro-p nil inside-comment-region-p t))
+                      ((and inside-comment-region-p (char= c #\|)) (setq comment-region-maybe-end-p t))
+                      ((and comment-region-maybe-end-p (char= c #\#)) (setq comment-region-maybe-end-p nil
+                                                                            inside-comment-region-p nil))
+                      (inside-comment-region-p (setq comment-region-maybe-end-p nil))
+                      ((char= c #\#) (setq reader-macro-p t))
+                      (escapep (setq escapep nil))
                       ((char= c #\\) (setq token-interstice-p nil escapep t))
                       (inside-stringp (when (char= c #\")
                                         (setq inside-stringp nil)
@@ -176,7 +185,7 @@
                              (t (setq left-i 0))))
                       (t (setq token-interstice-p nil))))
               (incf i))
-            (incr-finished-subforms)))))))
+            (unless inside-comment-region-p (incr-finished-subforms))))))))
 
 (read-home-lispwords)
 
