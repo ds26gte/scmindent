@@ -16,6 +16,7 @@
 (defvar *lisp-keywords* '())
 
 (defun set-lisp-indent-number (sym num-of-subforms-to-be-indented-wide)
+  (declare (symbol sym) (integer num-of-subforms-to-be-indented-wide))
   (let* ((x (symbol-name sym))
          (c (assoc x *lisp-keywords* :test #'string-equal)))
     (unless c
@@ -50,6 +51,7 @@
                   (t (set-lisp-indent-number a (cadr w))))))))))
 
 (defun past-next-atom (s i n)
+  (declare (string s) (integer i) (integer n))
   (loop
     (when (>= i n) (return n))
     (let ((c (char s i)))
@@ -59,6 +61,7 @@
     (incf i)))
 
 (defun get-lisp-indent-number (s &optional (possible-keyword-p t))
+  (declare (symbol s) (symbol possible-keyword-p))
   (or (cdr (assoc s *lisp-keywords* :test #'string-equal))
       (if (zerop (or (search "def" s :test #'char-equal) -1))
           0
@@ -70,6 +73,7 @@
           -1))))
 
 (defun literal-token-p (s)
+  (declare (string s))
   (let ((colon-pos (position #\: s)))
     (if colon-pos
         (if (= colon-pos 0) t nil)
@@ -84,6 +88,7 @@
   num-finished-subforms)
 
 (defun calc-subindent (s i n)
+  (declare (string s) (integer i) (integer n))
   (let* ((j (past-next-atom s i n))
          (lisp-indent-num 0)
          (delta-indent
@@ -99,6 +104,7 @@
     (values delta-indent lisp-indent-num j)))
 
 (defun num-leading-spaces (s)
+  (declare (string s))
   (let ((n (length s))
         (i 0) (j 0))
     (loop
@@ -109,6 +115,7 @@
         (t (return j))))))
 
 (defun string-trim-blanks (s)
+  (declare (string s))
   (string-trim '(#\space #\tab #\newline #\return) s))
 
 (defun indent-lines ()
