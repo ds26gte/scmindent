@@ -7,7 +7,7 @@
 
 ;Dorai Sitaram
 ;Oct 8, 1999
-;last change 2020-11-14
+;last change 2022-07-03
 
 ;this script takes lines of Lisp or Scheme code from its
 ;stdin and produces an indented version thereof on its
@@ -112,14 +112,17 @@
   (string-trim '(#\space #\tab #\newline #\return) s))
 
 (defun indent-lines ()
-  (let ((left-i 0) (paren-stack '()) (inside-stringp nil))
+  (let ((default-left-i -1) (left-i 0) (paren-stack '()) (inside-stringp nil))
     (loop
       (let* ((curr-line (or (read-line nil nil) (return)))
              (leading-spaces (num-leading-spaces curr-line))
              (curr-left-i
                (cond (inside-stringp leading-spaces)
                      ((null paren-stack)
-                      (when (= left-i 0) (setq left-i leading-spaces))
+                      (when (= left-i 0)
+                        (when (= default-left-i -1)
+                          (setq default-left-i leading-spaces))
+                        (setq left-i default-left-i))
                       left-i)
                      (t (let* ((lp (car paren-stack))
                                (nas (lparen-lisp-indent-num lp))
