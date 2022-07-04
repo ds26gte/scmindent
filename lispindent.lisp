@@ -1,5 +1,6 @@
 ":";if test -z "$LISP"; then LISP=ecl; fi
-":";if test "$LISP" = clisp; then exec clisp -q $0
+":";if test "$LISP" = clasp; then exec clasp --script $0
+":";elif test "$LISP" = clisp; then exec clisp -q $0
 ":";elif test "$LISP" = clozure; then exec ccl -b -Q -l $0
 ":";elif test "$LISP" = ecl; then exec ecl -shell $0
 ":";elif test "$LISP" = sbcl; then exec sbcl --script $0
@@ -25,13 +26,11 @@
 
 (defun retrieve-env (s)
   (declare (string s))
-  #+abcl (ext:getenv s)
+  #+(or abcl clasp clisp ecl) (ext:getenv s)
   #+allegro (sys:getenv s)
-  #+clisp (ext:getenv s)
   #+clozure (ccl:getenv s)
   #+cmucl (cdr (assoc (intern s :keyword)
                       ext:*environment-list* :test #'string=))
-  #+ecl (ext:getenv s)
   #+mkcl (mkcl:getenv s)
   #+sbcl (sb-ext:posix-getenv s))
 
@@ -60,15 +59,18 @@
              (return i))))
     (incf i)))
 
-(defun get-lisp-indent-number (s &key (raw-symbol-p nil))
+(defun get-lisp-indent-number (s)
   (declare (symbol s) (symbol raw-symbol-p))
-  (or (cdr (assoc s *lisp-keywords* :test #'string-equal))
-      (cond ((eql (search "def" s :test #'char-equal) 0) 0)
-            (raw-symbol-p -1)
-            (t (let ((p (position #\: s :from-end t)))
-                 (if p
-                     (get-lisp-indent-number (subseq s (1+ p)) :raw-symbol-p t)
-                     -1))))))
+  (labels ((get-lisp-indent-number
+             (s &key (raw-symbol-p nil))
+             (or (cdr (assoc s *lisp-keywords* :test #'string-equal))
+                 (cond ((eql (search "def" s :test #'char-equal) 0) 0)
+                       (raw-symbol-p -1)
+                       (t (let ((p (position #\: s :from-end t)))
+                            (if p
+                                (get-lisp-indent-number (subseq s (1+ p)) :raw-symbol-p t)
+                                -1)))))))
+    (get-lisp-indent-number s)))
 
 (defun literal-token-p (s)
   (declare (string s))
@@ -88,14 +90,14 @@
          (lisp-indent-num 0)
          (delta-indent
            (if (= j i) 0
-             (let ((w (subseq s i j)))
-               (if (or (and (>= i 2) (member (char s (- i 2)) '(#\' #\`)))
-                       (literal-token-p w)) 0
-                 (progn (setq lisp-indent-num (get-lisp-indent-number w))
-                        (case lisp-indent-num
-                          (-2 0)
-                          (-1 (if (< j n) (1+ (- j i)) 1))
-                          (t 1))))))))
+               (let ((w (subseq s i j)))
+                 (if (or (and (>= i 2) (member (char s (- i 2)) '(#\' #\`)))
+                         (literal-token-p w)) 0
+                     (progn (setq lisp-indent-num (get-lisp-indent-number w))
+                            (case lisp-indent-num
+                              (-2 0)
+                              (-1 (if (< j n) (1+ (- j i)) 1))
+                              (t 1))))))))
     (values delta-indent lisp-indent-num j)))
 
 (defun num-leading-spaces (s)
