@@ -7,7 +7,7 @@
 
 ;Dorai Sitaram
 ;Oct 8, 1999
-;last change 2022-07-03
+;last change 2022-07-04
 
 ;this script takes lines of Lisp or Scheme code from its
 ;stdin and produces an indented version thereof on its
@@ -41,14 +41,14 @@
                      :if-does-not-exist nil)
     (when i
       (loop
-        (let ((w (or (read i nil) (return))))
-          (let ((a (car w)))
-            (cond ((numberp a)
-                   (mapc (lambda (x) (set-lisp-indent-number x a)) (cdr w)))
-                  ((consp a)
-                   (let ((n (cadr w)))
-                     (mapc (lambda (x) (set-lisp-indent-number x n)) a)))
-                  (t (set-lisp-indent-number a (cadr w))))))))))
+        (let* ((w (or (read i nil) (return)))
+               (a (car w)))
+          (cond ((numberp a)
+                 (mapc (lambda (x) (set-lisp-indent-number x a)) (cdr w)))
+                ((consp a)
+                 (let ((n (cadr w)))
+                   (mapc (lambda (x) (set-lisp-indent-number x n)) a)))
+                (t (set-lisp-indent-number a (cadr w)))))))))
 
 (defun past-next-atom (s i n)
   (declare (string s) (integer i) (integer n))
@@ -60,27 +60,22 @@
              (return i))))
     (incf i)))
 
-(defun get-lisp-indent-number (s &optional (possible-keyword-p t))
-  (declare (symbol s) (symbol possible-keyword-p))
+(defun get-lisp-indent-number (s &key (raw-symbol-p nil))
+  (declare (symbol s) (symbol raw-symbol-p))
   (or (cdr (assoc s *lisp-keywords* :test #'string-equal))
-      (if (zerop (or (search "def" s :test #'char-equal) -1))
-          0
-        (if possible-keyword-p
-            (let ((p (position #\: s :from-end t)))
-              (if p
-                  (get-lisp-indent-number (subseq s (1+ p)) nil)
-                -1))
-          -1))))
+      (cond ((eql (search "def" s :test #'char-equal) 0) 0)
+            (raw-symbol-p -1)
+            (t (let ((p (position #\: s :from-end t)))
+                 (if p
+                     (get-lisp-indent-number (subseq s (1+ p)) :raw-symbol-p t)
+                     -1))))))
 
 (defun literal-token-p (s)
   (declare (string s))
   (let ((colon-pos (position #\: s)))
-    (if colon-pos
-        (if (= colon-pos 0) t nil)
-      (let ((s (read-from-string s)))
-        (or (characterp s) (numberp s) (stringp s))))))
-
-;(trace get-lisp-indent-number literal-token-p read-from-string past-next-atom)
+    (if colon-pos (= colon-pos 0)
+        (let ((s (read-from-string s)))
+          (or (characterp s) (numberp s) (stringp s))))))
 
 (defstruct lparen
   spaces-before
@@ -98,8 +93,8 @@
                        (literal-token-p w)) 0
                  (progn (setq lisp-indent-num (get-lisp-indent-number w))
                         (case lisp-indent-num
-                          ((-2) 0)
-                          ((-1) (if (< j n) (+ (- j i) 1) 1))
+                          (-2 0)
+                          (-1 (if (< j n) (1+ (- j i)) 1))
                           (t 1))))))))
     (values delta-indent lisp-indent-num j)))
 
