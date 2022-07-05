@@ -4,7 +4,7 @@
 
 ;Dorai Sitaram
 ;Oct 8, 1999
-;last change 2020-11-14
+;last change 2022-07-05
 
 ;This script takes lines of Scheme or Lisp code from its
 ;stdin and produces an indented version thereof on its
@@ -29,8 +29,10 @@
           (let loop ()
             (let ([w (read i)])
               (unless (eof-object? w)
-                (let ([a (car w)])
-                  (cond [(number? a)
+                (let ([a w])
+                  (when (pair? w) (set! a (car w)))
+                  (cond [(not (pair? w)) (set-lisp-indent-number a 0)]
+                        [(number? a)
                          (for-each (lambda (x) (set-lisp-indent-number x a)) (cdr w))]
                         [(list? a)
                          (let ([n (cadr w)])

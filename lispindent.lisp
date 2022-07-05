@@ -8,7 +8,7 @@
 
 ;Dorai Sitaram
 ;Oct 8, 1999
-;last change 2022-07-04
+;last change 2022-07-05
 
 ;this script takes lines of Lisp or Scheme code from its
 ;stdin and produces an indented version thereof on its
@@ -41,8 +41,12 @@
     (when i
       (loop
         (let* ((w (or (read i nil) (return)))
-               (a (car w)))
-          (cond ((numberp a)
+               (a w))
+          (unless (atom w)
+            (setq a (car w)))
+          (cond ((atom w)
+                 (set-lisp-indent-number a 0))
+                ((numberp a)
                  (mapc (lambda (x) (set-lisp-indent-number x a)) (cdr w)))
                 ((consp a)
                  (let ((n (cadr w)))
