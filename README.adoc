@@ -1,4 +1,4 @@
-// last modified 2019-11-13
+// last modified 2022-07-05
 = Editing Lisp and Scheme files in vi
 
 [quote]
@@ -191,6 +191,9 @@ it. E.g.,
 
 This assigns a LIN of 0 to `begin0`; 1 to
 `when` and `unless`; and 2 to `do` and `defun`.
+
+If the LIN is 0, it may be omitted and the enclosing parentheses
+dispensed with. Thus, `begin0` is short for `(begin0 0)`.
 
 As a convenience, you can bunch symbols with the same LIN
 together in one of two ways, e.g.,
