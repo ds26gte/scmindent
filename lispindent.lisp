@@ -151,6 +151,7 @@
             (loop
               (when (>= i n) (return))
               (let ((c (char curr-line i)))
+                (when (and reader-macro-p (not (char= c #\|))) (setq reader-macro-p nil))
                 (cond ((and reader-macro-p (char= c #\|)) (setq reader-macro-p nil inside-comment-region-p t))
                       ((and inside-comment-region-p (char= c #\|)) (setq comment-region-maybe-end-p t))
                       ((and comment-region-maybe-end-p (char= c #\#)) (setq comment-region-maybe-end-p nil
